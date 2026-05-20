@@ -1,0 +1,110 @@
+<testsuites id="" name="" tests="14" failures="0" skipped="0" errors="0" time="85.032088">
+<testsuite name="buy_order.spec.ts" timestamp="2026-04-13T23:15:00.637Z" hostname="chromium" tests="5" failures="0" skipped="0" time="26.893" errors="0">
+<testcase name="BuyOrder Form — Django Supplies App › Scenario 1: Create BuyOrder with all required fields" classname="buy_order.spec.ts" time="5.488">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/buy_order-BuyOrder-Form-—--3ad78-er-with-all-required-fields-chromium/test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="BuyOrder Form — Django Supplies App › Scenario 2: Check multiple العرض boxes and verify they save" classname="buy_order.spec.ts" time="4.822">
+<system-out>
+<![CDATA[Scenario 2 — Offer badges found: [ [32m'عرض Envap'[39m, [32m'عرض أول'[39m, [32m'عرض ثالث'[39m ]
+
+[[ATTACHMENT|test-results/buy_order-BuyOrder-Form-—--41681--boxes-and-verify-they-save-chromium/test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="BuyOrder Form — Django Supplies App › Scenario 3: Check multiple محضر باللجان boxes and verify they save" classname="buy_order.spec.ts" time="4.967">
+<system-out>
+<![CDATA[Scenario 3 — Committee badges found: [ [32m'لجنة فنية'[39m, [32m'ش. مالية'[39m, [32m'توقيع المشرف'[39m ]
+
+[[ATTACHMENT|test-results/buy_order-BuyOrder-Form-—--dbf70--boxes-and-verify-they-save-chromium/test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="BuyOrder Form — Django Supplies App › Scenario 4: Upload memo and attachment files, verify download links appear" classname="buy_order.spec.ts" time="4.7">
+<system-out>
+<![CDATA[Scenario 4 — Has memo download link: [33mtrue[39m
+Scenario 4 — Has attachment download link: [33mtrue[39m
+
+[[ATTACHMENT|test-results/buy_order-BuyOrder-Form-—--1e41f-erify-download-links-appear-chromium/test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="BuyOrder Form — Django Supplies App › Scenario 5: Full journey — all fields, checkboxes, attachments, verify detail page" classname="buy_order.spec.ts" time="6.916">
+<system-out>
+<![CDATA[Scenario 5 — Offer badges: [ [32m'عرض Envap'[39m, [32m'عرض أول'[39m, [32m'عرض ثالث'[39m ]
+Scenario 5 — Committee badges: [ [32m'لجنة فنية'[39m, [32m'ش. مالية'[39m, [32m'توقيع المشرف'[39m ]
+
+[[ATTACHMENT|test-results/buy_order-BuyOrder-Form-—--7d4c5-achments-verify-detail-page-chromium/test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="contract_operation.spec.ts" timestamp="2026-04-13T23:15:00.637Z" hostname="chromium" tests="9" failures="0" skipped="0" time="54.971" errors="0">
+<testcase name="ContractOperation Feature — Django Supplies App › Scenario 1: Sidebar contains عملية تعاقد link navigating to /add/" classname="contract_operation.spec.ts" time="3.153">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/contract_operation-Contrac-716d2-اقد-link-navigating-to-add--chromium/test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="ContractOperation Feature — Django Supplies App › Scenario 2: Create توريدات operation and verify redirect to channel detail" classname="contract_operation.spec.ts" time="5.003">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/contract_operation-Contrac-1d7bd--redirect-to-channel-detail-chromium/test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="ContractOperation Feature — Django Supplies App › Scenario 3: Live calculator shows remaining = total - paid" classname="contract_operation.spec.ts" time="2.403">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/contract_operation-Contrac-36bdb-hows-remaining-total---paid-chromium/test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="ContractOperation Feature — Django Supplies App › Scenario 4: Create صيانة operation, verify it appears in channel detail table" classname="contract_operation.spec.ts" time="6.032">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/contract_operation-Contrac-92878-ars-in-channel-detail-table-chromium/test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="ContractOperation Feature — Django Supplies App › Scenario 5: Create مقاولات operation, verify it appears in channel detail table" classname="contract_operation.spec.ts" time="4.8">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/contract_operation-Contrac-5b224-ars-in-channel-detail-table-chromium/test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="ContractOperation Feature — Django Supplies App › Scenario 6: Channel detail table shows grouped operations with correct remaining amounts" classname="contract_operation.spec.ts" time="8.777">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/contract_operation-Contrac-6acab-h-correct-remaining-amounts-chromium/test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="ContractOperation Feature — Django Supplies App › Scenario 7: Edit operation name and verify change persists" classname="contract_operation.spec.ts" time="9.542">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/contract_operation-Contrac-0fc2c--and-verify-change-persists-chromium/test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="ContractOperation Feature — Django Supplies App › Scenario 8: Delete operation and verify removal from table" classname="contract_operation.spec.ts" time="8.99">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/contract_operation-Contrac-c79fd-d-verify-removal-from-table-chromium/test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="ContractOperation Feature — Django Supplies App › Scenario 9: Create operation with attachment, verify download link in table" classname="contract_operation.spec.ts" time="6.271">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/contract_operation-Contrac-07fdb-rify-download-link-in-table-chromium/test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>

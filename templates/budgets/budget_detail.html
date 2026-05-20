@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}{{ budget.name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h3 class="mb-1"><i class="bi bi-wallet2"></i> {{ budget.name }}</h3>
+        <small class="text-muted">
+            <i class="bi bi-calendar3"></i> أُنشئت في {{ budget.created_at|date:"Y-m-d H:i" }}
+            {% if budget.updated_at and budget.updated_at != budget.created_at %}
+                · آخر تعديل {{ budget.updated_at|date:"Y-m-d H:i" }}
+            {% endif %}
+        </small>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'budgets:budget_list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-right"></i> العودة
+        </a>
+        <a href="{% url 'budgets:budget_update' budget.pk %}" class="btn btn-warning">
+            <i class="bi bi-pencil"></i> تعديل
+        </a>
+        <a href="{% url 'budgets:budget_delete' budget.pk %}" class="btn btn-outline-danger">
+            <i class="bi bi-trash"></i> حذف
+        </a>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md">
+        <div class="card border-0 shadow-sm h-100"><div class="card-body text-center">
+            <div class="text-muted small">إجمالي الموزع</div>
+            <div class="fs-4 fw-bold">{{ totals.allocated }}</div>
+        </div></div>
+    </div>
+    <div class="col-6 col-md">
+        <div class="card border-0 shadow-sm h-100"><div class="card-body text-center">
+            <div class="text-muted small">إجمالي التعزيز</div>
+            <div class="fs-4 fw-bold">{{ totals.reinforcement }}</div>
+        </div></div>
+    </div>
+    <div class="col-6 col-md">
+        <div class="card border-0 shadow-sm h-100"><div class="card-body text-center">
+            <div class="text-muted small">إجمالي الارتباط</div>
+            <div class="fs-4 fw-bold">{{ totals.commitment }}</div>
+        </div></div>
+    </div>
+    <div class="col-6 col-md">
+        <div class="card border-0 shadow-sm h-100"><div class="card-body text-center">
+            <div class="text-muted small">إجمالي الصرف</div>
+            <div class="fs-4 fw-bold">{{ totals.expenditure }}</div>
+        </div></div>
+    </div>
+    <div class="col-12 col-md">
+        <div class="card border-0 shadow-sm h-100 bg-success-subtle"><div class="card-body text-center">
+            <div class="text-muted small">الرصيد المتبقي</div>
+            <div class="fs-4 fw-bold text-success">{{ totals.remaining }}</div>
+        </div></div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">تفاصيل الأبواب</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-bordered mb-0 text-center align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>الباب</th>
+                        <th>المبلغ الموزع</th>
+                        <th>تعزيز</th>
+                        <th>ارتباط</th>
+                        <th>صرف</th>
+                        <th class="table-success">الرصيد المتبقي</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in chapters %}
+                    <tr>
+                        <td class="fw-bold">باب {{ c.chapter_number }}</td>
+                        <td>{{ c.allocated }}</td>
+                        <td>{{ c.reinforcement }}</td>
+                        <td>{{ c.commitment }}</td>
+                        <td>{{ c.expenditure }}</td>
+                        <td class="fw-bold text-success">{{ c.remaining }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="table-warning fw-bold">
+                        <td>الإجماليات</td>
+                        <td>{{ totals.allocated }}</td>
+                        <td>{{ totals.reinforcement }}</td>
+                        <td>{{ totals.commitment }}</td>
+                        <td>{{ totals.expenditure }}</td>
+                        <td class="text-success">{{ totals.remaining }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

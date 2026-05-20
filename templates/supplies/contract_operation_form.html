@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% if object %}تعديل عملية تعاقد{% else %}إضافة عملية تعاقد{% endif %} - التوريدات
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>{% if object %}تعديل عملية تعاقد{% else %}إضافة عملية تعاقد جديدة{% endif %}</h3>
+    {% if channel %}
+    <a href="{% url 'supplies:channel_detail' channel.pk %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-right"></i> رجوع للقناة
+    </a>
+    {% elif object %}
+    <a href="{% url 'supplies:channel_detail' object.supply_channel_id %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-right"></i> رجوع للقناة
+    </a>
+    {% else %}
+    <a href="{% url 'supplies:channel_list' %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-right"></i> رجوع
+    </a>
+    {% endif %}
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-dark text-white">
+        <h6 class="mb-0"><i class="bi bi-file-earmark-ruled"></i> بيان أعمال التوريدات/صيانة/مقاولات</h6>
+    </div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.supply_channel }}
+
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                        <li>{{ field.label }}: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label for="{{ form.operation_type.id_for_label }}" class="form-label">نوع العملية *</label>
+                    {{ form.operation_type }}
+                </div>
+                <div class="col-md-8">
+                    <label for="{{ form.operation_name.id_for_label }}" class="form-label">اسم العملية *</label>
+                    {{ form.operation_name }}
+                </div>
+                <div class="col-md-6">
+                    <label for="{{ form.contracting_entity.id_for_label }}" class="form-label">جهة التعاقد</label>
+                    {{ form.contracting_entity }}
+                </div>
+                <div class="col-md-6">
+                    <label for="{{ form.contract_start_date.id_for_label }}" class="form-label">تاريخ بداية التعاقد</label>
+                    {{ form.contract_start_date }}
+                </div>
+                <div class="col-md-4" id="assignment-method-field">
+                    <label for="{{ form.assignment_method.id_for_label }}" class="form-label">طريقة الإسناد</label>
+                    {{ form.assignment_method }}
+                </div>
+                <div class="col-md-4">
+                    <label for="{{ form.total_amount.id_for_label }}" class="form-label">المبلغ الإجمالي</label>
+                    {{ form.total_amount }}
+                </div>
+                <div class="col-md-4">
+                    <label for="{{ form.amount_paid.id_for_label }}" class="form-label">المبلغ المدفوع</label>
+                    {{ form.amount_paid }}
+                </div>
+                <div class="col-12">
+                    <label class="form-label">المبلغ المتبقي</label>
+                    <div id="remaining-display" class="form-control-plaintext fw-bold text-danger">-</div>
+                </div>
+                <div class="col-12">
+                    <label for="{{ form.notes.id_for_label }}" class="form-label">ملاحظات</label>
+                    {{ form.notes }}
+                </div>
+                <div class="col-md-6">
+                    <label for="{{ form.attachment.id_for_label }}" class="form-label">المرفق</label>
+                    {{ form.attachment }}
+                    {% if object and object.attachment %}
+                    <small class="text-muted">الملف الحالي: <a href="{{ object.attachment.url }}" target="_blank">{{ object.attachment.name }}</a></small>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i>
+                    {% if object %}حفظ التعديلات{% else %}إضافة{% endif %}
+                </button>
+                <button type="button" class="btn btn-outline-secondary" onclick="history.back()">إلغاء</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+(function () {
+    const totalInput = document.getElementById('{{ form.total_amount.id_for_label }}');
+    const paidInput  = document.getElementById('{{ form.amount_paid.id_for_label }}');
+    const display    = document.getElementById('remaining-display');
+
+    function updateRemaining() {
+        const total = parseFloat(totalInput.value) || 0;
+        const paid  = parseFloat(paidInput.value)  || 0;
+        const remaining = total - paid;
+        display.textContent = remaining.toLocaleString('ar-EG', {minimumFractionDigits: 2});
+        display.className = 'form-control-plaintext fw-bold ' + (remaining < 0 ? 'text-danger' : 'text-success');
+    }
+
+    totalInput.addEventListener('input', updateRemaining);
+    paidInput.addEventListener('input', updateRemaining);
+    updateRemaining();
+})();
+</script>
+{% endblock %}

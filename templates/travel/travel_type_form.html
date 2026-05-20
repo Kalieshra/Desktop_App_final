@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if object %}تعديل نوع السفرية{% else %}إضافة نوع سفرية جديد{% endif %} - السفريات
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2>
+            <i class="bi bi-tag"></i>
+            {% if object %}تعديل نوع السفرية{% else %}إضافة نوع سفرية جديد{% endif %}
+        </h2>
+    </div>
+    <a href="{% url 'travel:travel_type_list' %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> رجوع
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        {% if form.errors %}
+        <div class="alert alert-danger" role="alert">
+            <h5 class="alert-heading">يرجى تصحيح الأخطاء التالية:</h5>
+            {{ form.errors }}
+        </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="{{ form.name.id_for_label }}" class="form-label">
+                        اسم النوع <span class="text-danger">*</span>
+                    </label>
+                    {{ form.name }}
+                    {% if form.name.errors %}
+                    <div class="text-danger small mt-1">{{ form.name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="col-md-6">
+                    <label for="{{ form.is_active.id_for_label }}" class="form-label">
+                        الحالة
+                    </label>
+                    <div class="form-check form-switch">
+                        {{ form.is_active }}
+                        <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
+                            نشط
+                        </label>
+                    </div>
+                    {% if form.is_active.errors %}
+                    <div class="text-danger small mt-1">{{ form.is_active.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-12">
+                    <label for="{{ form.description.id_for_label }}" class="form-label">
+                        الوصف
+                    </label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                    <div class="text-danger small mt-1">{{ form.description.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i>
+                    {% if object %}حفظ التعديلات{% else %}إضافة{% endif %}
+                </button>
+                <a href="{% url 'travel:travel_type_list' %}" class="btn btn-secondary">
+                    <i class="bi bi-x-circle"></i> إلغاء
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

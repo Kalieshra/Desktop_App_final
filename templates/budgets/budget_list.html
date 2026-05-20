@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}الميزانيات{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3><i class="bi bi-wallet2"></i> الميزانيات</h3>
+    <a href="{% url 'budgets:budget_create' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> إضافة ميزانية
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-9">
+                <input type="text" name="q" value="{{ q }}" class="form-control"
+                       placeholder="بحث باسم الميزانية...">
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-search"></i> بحث
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped mb-0 align-middle">
+                <thead class="table-light text-center">
+                    <tr>
+                        <th>#</th>
+                        <th class="text-end">اسم الميزانية</th>
+                        <th>إجمالي الموزع</th>
+                        <th>إجمالي التعزيز</th>
+                        <th>إجمالي الارتباط</th>
+                        <th>إجمالي الصرف</th>
+                        <th>الرصيد المتبقي</th>
+                        <th>تاريخ الإنشاء</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for budget in budgets %}
+                    <tr>
+                        <td class="text-center">{{ budget.pk }}</td>
+                        <td><strong>{{ budget.name }}</strong></td>
+                        <td class="text-center">{{ budget.total_allocated }}</td>
+                        <td class="text-center">{{ budget.total_reinforcement }}</td>
+                        <td class="text-center">{{ budget.total_commitment }}</td>
+                        <td class="text-center">{{ budget.total_expenditure }}</td>
+                        <td class="text-center fw-bold text-success">{{ budget.total_remaining }}</td>
+                        <td class="text-center text-nowrap">{{ budget.created_at|date:"Y-m-d H:i" }}</td>
+                        <td class="text-center text-nowrap">
+                            <a href="{% url 'budgets:budget_detail' budget.pk %}" class="btn btn-sm btn-outline-info" title="عرض">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{% url 'budgets:budget_update' budget.pk %}" class="btn btn-sm btn-outline-warning" title="تعديل">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'budgets:budget_delete' budget.pk %}" class="btn btn-sm btn-outline-danger" title="حذف">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="9" class="text-center text-muted py-5">
+                            <i class="bi bi-inbox display-6 d-block mb-2"></i>
+                            لا توجد ميزانيات مسجلة بعد.
+                            <div class="mt-2">
+                                <a href="{% url 'budgets:budget_create' %}" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-plus-circle"></i> أضف أول ميزانية
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% if is_paginated %}
+<nav class="mt-3">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}">السابق</a></li>
+        {% endif %}
+        <li class="page-item disabled"><span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span></li>
+        {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}">التالي</a></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

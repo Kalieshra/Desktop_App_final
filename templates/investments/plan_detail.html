@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}{{ plan.name }} - خطة استثمار{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>{{ plan.name }}</h3>
+    <div class="d-flex gap-2">
+        <a href="{% url 'investments:plan_list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-right"></i> القائمة
+        </a>
+        <a href="{% url 'investments:plan_update' plan.pk %}" class="btn btn-warning">
+            <i class="bi bi-pencil"></i> تعديل
+        </a>
+        <a href="{% url 'investments:plan_delete' plan.pk %}" class="btn btn-outline-danger">
+            <i class="bi bi-trash"></i> حذف
+        </a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-3">
+    <div class="card-body py-2">
+        <small class="text-muted">
+            تاريخ الإنشاء: {{ plan.created_at|date:"Y-m-d H:i" }} &nbsp;|&nbsp;
+            آخر تعديل: {{ plan.updated_at|date:"Y-m-d H:i" }}
+        </small>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">جدول الاستثمارات الثابتة</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-bordered table-sm mb-0 investment-view-table">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th style="min-width:230px; text-align:right;">البيان</th>
+                        <th style="min-width:130px;">الخطة الأصلية</th>
+                        <th style="min-width:130px;">الخطة المعدلة</th>
+                        <th style="min-width:110px;" class="table-warning">الفرق</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for section in section_groups %}
+                    <tr class="section-header">
+                        <td colspan="4" class="fw-bold">{{ section.section_label }}</td>
+                    </tr>
+                    {% for row in section.rows %}
+                    <tr {% if row.is_subtotal %}class="subtotal-row"{% endif %}>
+                        <td {% if row.is_subtotal %}class="fw-bold"{% endif %}>{{ row.label }}</td>
+                        <td class="text-center">{{ row.original }}</td>
+                        <td class="text-center">{{ row.modified }}</td>
+                        <td class="text-center fw-bold {% if row.difference > 0 %}diff-positive{% elif row.difference < 0 %}diff-negative{% else %}diff-zero{% endif %}">
+                            {% if row.difference >= 0 %}+{% endif %}{{ row.difference }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">منقول منه / منقول اليه</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-bordered table-sm mb-0">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th>الحقل المصدر</th>
+                        <th>القيمة المنقولة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in manqool_entries %}
+                    <tr>
+                        <td>{{ entry.get_source_field_display }}</td>
+                        <td class="text-center">{{ entry.main_value }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="2" class="text-center text-muted py-3">لا توجد سجلات</td></tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="table-success">
+                        <td class="text-end fw-bold">إجمالي منقول اليه</td>
+                        <td class="text-center fw-bold">{{ manqool_total_diff }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+.investment-view-table .section-header td { background-color: #dbeafe; }
+.investment-view-table .subtotal-row td { background-color: #fef9c3; font-weight: 600; }
+.diff-positive { color: #16a34a; }
+.diff-negative { color: #dc2626; }
+.diff-zero { color: #6b7280; }
+</style>
+{% endblock %}

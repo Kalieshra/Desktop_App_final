@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block title %}المناقصات - التوريدات{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>المناقصات</h3>
+    <a href="{% url 'supplies:tender_create' %}" class="btn btn-success">
+        <i class="bi bi-plus-circle"></i> إضافة مناقصة
+    </a>
+</div>
+
+<!-- Filters -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-5">
+                <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="بحث باسم المناقصة...">
+            </div>
+            <div class="col-md-5">
+                <select name="channel" class="form-select">
+                    <option value="">-- كل القنوات --</option>
+                    {% for ch in channels %}
+                    <option value="{{ ch.pk }}" {% if selected_channel == ch.pk|stringformat:"s" %}selected{% endif %}>{{ ch.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-search"></i> بحث
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Table -->
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover mb-0 text-center align-middle">
+                <thead class="table-success">
+                    <tr>
+                        <th>اسم المناقصة</th>
+                        <th>القناة</th>
+                        <th>محضر فحص شكلي</th>
+                        <th>بأمر إداري تشكيل</th>
+                        <th>محضر فني</th>
+                        <th>محضر 1</th>
+                        <th>تقرير فني</th>
+                        <th>محضر 2</th>
+                        <th>فتح مالي</th>
+                        <th>تقرير مالي</th>
+                        <th>محضر 3</th>
+                        <th>إخطار قبول العطاء</th>
+                        <th>ارتباط</th>
+                        <th>القيمة التقديرية</th>
+                        <th>محضر فض مظاريف</th>
+                        <th>مناقصات / مزايدات</th>
+                        <th>مرفق</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tender in tenders %}
+                    <tr>
+                        <td class="text-start">{{ tender.tender_name }}</td>
+                        <td>{{ tender.supply_channel.name }}</td>
+                        <td>
+                            {% if tender.formal_inspection_minutes %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}-{% endif %}
+                            {% if tender.formal_inspection_minutes_attachment %}
+                            <a href="{{ tender.formal_inspection_minutes_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق"><i class="bi bi-download"></i></a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.admin_formation_order %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}-{% endif %}
+                            {% if tender.admin_formation_order_attachment %}
+                            <a href="{{ tender.admin_formation_order_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق"><i class="bi bi-download"></i></a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.technical_minutes %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}-{% endif %}
+                            {% if tender.technical_minutes_attachment %}
+                            <a href="{{ tender.technical_minutes_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق"><i class="bi bi-download"></i></a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.minutes_1 %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}-{% endif %}
+                            {% if tender.minutes_1_attachment %}
+                            <a href="{{ tender.minutes_1_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق"><i class="bi bi-download"></i></a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.technical_report %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}-{% endif %}
+                            {% if tender.technical_report_attachment %}
+                            <a href="{{ tender.technical_report_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق"><i class="bi bi-download"></i></a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.minutes_2 %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}-{% endif %}
+                            {% if tender.minutes_2_attachment %}
+                            <a href="{{ tender.minutes_2_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق"><i class="bi bi-download"></i></a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.financial_opening %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}-{% endif %}
+                            {% if tender.financial_opening_attachment %}
+                            <a href="{{ tender.financial_opening_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق"><i class="bi bi-download"></i></a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.financial_report %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}-{% endif %}
+                            {% if tender.financial_report_attachment %}
+                            <a href="{{ tender.financial_report_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق"><i class="bi bi-download"></i></a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.minutes_3 %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}-{% endif %}
+                            {% if tender.minutes_3_attachment %}
+                            <a href="{{ tender.minutes_3_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق"><i class="bi bi-download"></i></a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.bid_acceptance_notification %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}-{% endif %}
+                            {% if tender.bid_acceptance_notification_attachment %}
+                            <a href="{{ tender.bid_acceptance_notification_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق"><i class="bi bi-download"></i></a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.linking %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}-{% endif %}
+                            {% if tender.linking_attachment %}
+                            <a href="{{ tender.linking_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق"><i class="bi bi-download"></i></a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.estimated_value_minutes %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}-{% endif %}
+                            {% if tender.estimated_value_attachment %}
+                            <a href="{{ tender.estimated_value_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق"><i class="bi bi-download"></i></a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.envelope_opening_minutes %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}-{% endif %}
+                            {% if tender.envelope_opening_attachment %}
+                            <a href="{{ tender.envelope_opening_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق"><i class="bi bi-download"></i></a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.tender_type %}
+                            <span class="badge bg-success-subtle text-success border border-success-subtle">{{ tender.get_tender_type_display }}</span>
+                            {% else %}-{% endif %}
+                            {% if tender.tender_type_attachment %}
+                            <a href="{{ tender.tender_type_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق"><i class="bi bi-download"></i></a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.attachment %}
+                            <a href="{{ tender.attachment.url }}" class="btn btn-sm btn-outline-primary" target="_blank" title="تحميل المرفق">
+                                <i class="bi bi-download"></i>
+                            </a>
+                            {% else %}-{% endif %}
+                        </td>
+                        <td class="text-nowrap">
+                            <a href="{% url 'supplies:tender_update' tender.pk %}" class="btn btn-sm btn-outline-warning" title="تعديل">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'supplies:tender_delete' tender.pk %}" class="btn btn-sm btn-outline-danger" title="حذف">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="18" class="text-muted text-center py-4">لا توجد مناقصات بعد.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if is_paginated %}
+<nav class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ q }}&channel={{ selected_channel }}">السابق</a>
+        </li>
+        {% endif %}
+        <li class="page-item disabled">
+            <span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+        </li>
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ q }}&channel={{ selected_channel }}">التالي</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

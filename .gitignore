@@ -1,0 +1,27 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.env
+db.sqlite3
+media/attachments/
+*.egg-info/
+.eggs/
+dist/
+build/
+
+.idea/
+.vscode/
+*.swp
+*.swo
+staticfiles/
+
+# Windows
+setup.log
+.ocr_fallback
+Thumbs.db
+desktop.ini
+*.lnk
+
+# Python Virtual Environment
+.venv/

@@ -1,0 +1,728 @@
+{% extends "base.html" %}
+{% load travel_tags %}
+
+{% block title %}لوحة التحكم{% endblock %}
+
+{% block content %}
+<!-- Prevent browser from caching this page -->
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<div class="mb-4">
+    <h2>مرحبا بك في هندسة المفاعلات</h2>
+    <p class="text-muted">نظرة عامة على البيانات والإحصائيات</p>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-9">
+                <input type="text" name="q" value="{{ q }}" class="form-control form-control-lg"
+                       placeholder="بحث شامل في جميع الأقسام (السفريات، التراخيص، التوريدات)...">
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary btn-lg w-100">
+                    <i class="bi bi-search"></i> بحث
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if q %}
+<!-- Search Results -->
+<h4 class="mb-3">نتائج البحث عن: "{{ q }}"</h4>
+
+<!-- Travel Results -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="bi bi-airplane"></i> السفريات</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>اسم المسافر</th>
+                        <th>عدد السفريات</th>
+                        <th>البلد</th>
+                        <th>تاريخ من</th>
+                        <th>تاريخ إلى</th>
+                        <th>DeadLine</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in travel_results %}
+                    <tr>
+                        <td>{{ t.name }}</td>
+                        <td>
+                            <a href="{% url 'travel:by_person' %}?name={{ t.name|urlencode }}"
+                               class="badge bg-primary text-decoration-none"
+                               title="عرض كل سفريات {{ t.name }}">
+                                {{ t.person_travels_count|default:1|arabic_number }}
+                            </a>
+                        </td>
+                        <td>{{ t.course_location|default:"-" }}</td>
+                        <td>{{ t.date_from|default:"-" }}</td>
+                        <td>{{ t.date_to|default:"-" }}</td>
+                        <td>{{ t.deadline|default:"-" }}</td>
+                        <td>
+                            <a href="{% url 'travel:by_person' %}?name={{ t.name|urlencode }}"
+                               class="btn btn-sm btn-outline-success"
+                               title="قائمة سفريات هذا الشخص">
+                                <i class="bi bi-list-ul"></i>
+                            </a>
+                            <a href="{% url 'travel:detail' t.pk %}" class="btn btn-sm btn-outline-primary"
+                               title="التفاصيل">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-3 text-muted">لا توجد نتائج</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Licenses Results -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="bi bi-card-checklist"></i> التراخيص</h5>
+    </div>
+    <div class="card-body p-0">
+        {% if license_channels %}
+        <h6 class="px-3 pt-3 mb-2 text-muted">القنوات</h6>
+        <div class="table-responsive">
+            <table class="table table-hover table-striped mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>اسم القناة</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ch in license_channels %}
+                    <tr>
+                        <td>{{ ch.pk }}</td>
+                        <td>{{ ch.name }}</td>
+                        <td>
+                            <a href="{% url 'licenses:channel_detail' ch.pk %}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i> عرض
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        {% if personal_licenses %}
+        <h6 class="px-3 pt-3 mb-2 text-muted">التراخيص الشخصية</h6>
+        <div class="table-responsive">
+            <table class="table table-hover table-striped mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>اسم المتقدم</th>
+                        <th>القناة</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pl in personal_licenses %}
+                    <tr>
+                        <td>{{ pl.pk }}</td>
+                        <td>{{ pl.applicant_name }}</td>
+                        <td>{{ pl.channel.name }}</td>
+                        <td>
+                            <a href="{% url 'licenses:channel_detail' pl.channel_id %}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i> عرض القناة
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        {% if inspections %}
+        <h6 class="px-3 pt-3 mb-2 text-muted">التفتيشات</h6>
+        <div class="table-responsive">
+            <table class="table table-hover table-striped mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>اسم المفتش</th>
+                        <th>القناة</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ins in inspections %}
+                    <tr>
+                        <td>{{ ins.pk }}</td>
+                        <td>{{ ins.inspector_name }}</td>
+                        <td>{{ ins.channel.name }}</td>
+                        <td>
+                            <a href="{% url 'licenses:channel_detail' ins.channel_id %}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i> عرض القناة
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        {% if not license_channels and not personal_licenses and not inspections %}
+        <p class="text-center py-3 text-muted mb-0">لا توجد نتائج</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Supplies Results -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="bi bi-box-seam"></i> التوريدات</h5>
+    </div>
+    <div class="card-body p-0">
+        {% if supply_channels %}
+        <h6 class="px-3 pt-3 mb-2 text-muted">القنوات</h6>
+        <div class="table-responsive">
+            <table class="table table-hover table-striped mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>اسم القناة</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ch in supply_channels %}
+                    <tr>
+                        <td>{{ ch.pk }}</td>
+                        <td>{{ ch.name }}</td>
+                        <td>
+                            <a href="{% url 'supplies:channel_detail' ch.pk %}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i> عرض
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        {% if buy_orders %}
+        <h6 class="px-3 pt-3 mb-2 text-muted">طلبات الشراء</h6>
+        <div class="table-responsive">
+            <table class="table table-hover table-striped mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>اسم مقدم الطلب</th>
+                        <th>القناة</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bo in buy_orders %}
+                    <tr>
+                        <td>{{ bo.pk }}</td>
+                        <td>{{ bo.requester_name }}</td>
+                        <td>{{ bo.supply_channel.name }}</td>
+                        <td>
+                            <a href="{% url 'supplies:buy_order_detail' bo.pk %}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i> عرض
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        {% if offers %}
+        <h6 class="px-3 pt-3 mb-2 text-muted">العروض</h6>
+        <div class="table-responsive">
+            <table class="table table-hover table-striped mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>اسم الشركة</th>
+                        <th>طلب الشراء</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for of in offers %}
+                    <tr>
+                        <td>{{ of.pk }}</td>
+                        <td>{{ of.company_name }}</td>
+                        <td>{{ of.buy_order.requester_name }}</td>
+                        <td>
+                            <a href="{% url 'supplies:buy_order_detail' of.buy_order_id %}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i> عرض طلب الشراء
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        {% if not supply_channels and not buy_orders and not offers %}
+        <p class="text-center py-3 text-muted mb-0">لا توجد نتائج</p>
+        {% endif %}
+    </div>
+</div>
+
+{% else %}
+<!-- Normal Dashboard Content -->
+{% if deadline_alert_count > 0 %}
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm bg-warning text-dark deadline-alarm-card" role="button" data-bs-toggle="collapse" data-bs-target="#deadlineAlertList" aria-expanded="false" aria-controls="deadlineAlertList" style="cursor: pointer;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-1">تنبيه: مواعيد نهائية قريبة</h6>
+                        <h2 class="mb-0">{{ deadline_alert_count }}</h2>
+                        <small>سفريات مواعيدها النهائية خلال 9 أيام القادمة — اضغط لعرض التفاصيل</small>
+                    </div>
+                    <i class="bi bi-exclamation-triangle-fill fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="collapse mb-4" id="deadlineAlertList">
+    <div class="card border-warning shadow-sm">
+        <div class="card-header bg-warning bg-opacity-25">
+            <h6 class="mb-0">السفريات القادمة خلال 9 أيام</h6>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>الاسم</th>
+                            <th>اسم الدورة</th>
+                            <th>مكان الدورة</th>
+                            <th>الموعد النهائي</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in deadline_alert_travels %}
+                        <tr>
+                            <td>{{ t.pk }}</td>
+                            <td>{{ t.name }}</td>
+                            <td>{{ t.course_name }}</td>
+                            <td>{{ t.course_location }}</td>
+                            <td>{{ t.deadline }}</td>
+                            <td>
+                                <a href="{% url 'travel:detail' t.pk %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i> عرض
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% if deadline_alert_count > 0 %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Auto-expand the deadline alert list
+    var alertList = document.getElementById('deadlineAlertList');
+    if (alertList) {
+        var bsCollapse = new bootstrap.Collapse(alertList, { toggle: false });
+        bsCollapse.show();
+    }
+
+    // Audio beep announcement using Web Audio API
+    try {
+        var AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+            var ctx = new AudioCtx();
+            function beep(freq, start, duration) {
+                var osc = ctx.createOscillator();
+                var gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'sine';
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.3, ctx.currentTime + start);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + duration);
+                osc.start(ctx.currentTime + start);
+                osc.stop(ctx.currentTime + start + duration);
+            }
+            // Two-tone alert beep
+            beep(880, 0.0, 0.3);
+            beep(660, 0.35, 0.3);
+        }
+    } catch (e) { /* audio not supported, silent fallback */ }
+});
+</script>
+{% endif %}
+
+<!-- ── Counter Cards: Travel ── -->
+<h5 class="mb-3"><i class="bi bi-airplane"></i> السفريات</h5>
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-1">إجمالي السفريات</h6>
+                        <h2 class="mb-0">{{ travel_total }}</h2>
+                    </div>
+                    <i class="bi bi-journal-text fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-1">أنواع السفريات</h6>
+                        <h2 class="mb-0">{{ travel_type_stats|length }}</h2>
+                    </div>
+                    <i class="bi bi-bookmark-star fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-1">الجهات</h6>
+                        <h2 class="mb-0">{{ department_stats|length }}</h2>
+                    </div>
+                    <i class="bi bi-building fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── Counter Cards: Licenses ── -->
+<h5 class="mb-3"><i class="bi bi-card-checklist"></i> التراخيص</h5>
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-1">القنوات</h6>
+                        <h2 class="mb-0">{{ license_channels_total }}</h2>
+                    </div>
+                    <i class="bi bi-broadcast fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-1">التراخيص المكانية</h6>
+                        <h2 class="mb-0">{{ place_licenses_total }}</h2>
+                    </div>
+                    <i class="bi bi-geo-alt fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-1">التراخيص الشخصية</h6>
+                        <h2 class="mb-0">{{ personal_licenses_total }}</h2>
+                    </div>
+                    <i class="bi bi-person-badge fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm bg-warning text-dark">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-1">التفتيشات</h6>
+                        <h2 class="mb-0">{{ inspections_total }}</h2>
+                    </div>
+                    <i class="bi bi-clipboard-check fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── Counter Cards: Supplies ── -->
+<h5 class="mb-3"><i class="bi bi-box-seam"></i> التوريدات</h5>
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-1">قنوات التوريد</h6>
+                        <h2 class="mb-0">{{ supply_channels_total }}</h2>
+                    </div>
+                    <i class="bi bi-broadcast fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-1">طلبات الشراء</h6>
+                        <h2 class="mb-0">{{ buy_orders_total }}</h2>
+                    </div>
+                    <i class="bi bi-cart fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-1">العروض</h6>
+                        <h2 class="mb-0">{{ offers_total }}</h2>
+                    </div>
+                    <i class="bi bi-tag fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if travel_type_stats %}
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h6 class="mb-0">إحصائيات نوع السفرية</h6>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>نوع السفرية</th>
+                            <th>العدد</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stat in travel_type_stats %}
+                        <tr>
+                            <td>{{ stat.travel_type__name }}</td>
+                            <td><span class="badge bg-primary">{{ stat.count }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h6 class="mb-0">إحصائيات الجهات</h6>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>الجهة</th>
+                            <th>العدد</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stat in department_stats %}
+                        <tr>
+                            <td>{{ stat.department }}</td>
+                            <td><span class="badge bg-success">{{ stat.count }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- ── Recent Travel ── -->
+{% if recent_travel %}
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h6 class="mb-0"><i class="bi bi-airplane"></i> آخر السفريات المضافة</h6>
+        <a href="{% url 'travel:list' %}" class="btn btn-sm btn-outline-primary">عرض الكل</a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>اسم المسافر</th>
+                        <th>عدد السفريات</th>
+                        <th>البلد</th>
+                        <th>تاريخ من</th>
+                        <th>تاريخ إلى</th>
+                        <th>DeadLine</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in recent_travel %}
+                    <tr>
+                        <td>{{ t.name }}</td>
+                        <td>
+                            <a href="{% url 'travel:by_person' %}?name={{ t.name|urlencode }}"
+                               class="badge bg-primary text-decoration-none"
+                               title="عرض كل سفريات {{ t.name }}">
+                                {{ t.person_travels_count|default:1|arabic_number }}
+                            </a>
+                        </td>
+                        <td>{{ t.course_location|default:"-" }}</td>
+                        <td>{{ t.date_from|default:"-" }}</td>
+                        <td>{{ t.date_to|default:"-" }}</td>
+                        <td>{{ t.deadline|default:"-" }}</td>
+                        <td>
+                            <a href="{% url 'travel:by_person' %}?name={{ t.name|urlencode }}"
+                               class="btn btn-sm btn-outline-success"
+                               title="قائمة سفريات هذا الشخص">
+                                <i class="bi bi-list-ul"></i>
+                            </a>
+                            <a href="{% url 'travel:detail' t.pk %}" class="btn btn-sm btn-outline-primary"
+                               title="التفاصيل">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- ── Recent License Channels ── -->
+{% if recent_license_channels %}
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h6 class="mb-0"><i class="bi bi-card-checklist"></i> آخر قنوات التراخيص المضافة</h6>
+        <a href="{% url 'licenses:channel_list' %}" class="btn btn-sm btn-outline-primary">عرض الكل</a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>اسم القناة</th>
+                        <th>التاريخ</th>
+                        <th>أنشئ بواسطة</th>
+                        <th>تاريخ الإنشاء</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ch in recent_license_channels %}
+                    <tr>
+                        <td>{{ ch.pk }}</td>
+                        <td>{{ ch.name }}</td>
+                        <td>{{ ch.date|default:"-" }}</td>
+                        <td>{{ ch.created_by|default:"-" }}</td>
+                        <td>{{ ch.created_at }}</td>
+                        <td>
+                            <a href="{% url 'licenses:channel_detail' ch.pk %}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- ── Recent Supply Channels ── -->
+{% if recent_supply_channels %}
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h6 class="mb-0"><i class="bi bi-box-seam"></i> آخر قنوات التوريد المضافة</h6>
+        <a href="{% url 'supplies:channel_list' %}" class="btn btn-sm btn-outline-primary">عرض الكل</a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>اسم القناة</th>
+                        <th>التاريخ</th>
+                        <th>أنشئ بواسطة</th>
+                        <th>تاريخ الإنشاء</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ch in recent_supply_channels %}
+                    <tr>
+                        <td>{{ ch.pk }}</td>
+                        <td>{{ ch.name }}</td>
+                        <td>{{ ch.date|default:"-" }}</td>
+                        <td>{{ ch.created_by|default:"-" }}</td>
+                        <td>{{ ch.created_at }}</td>
+                        <td>
+                            <a href="{% url 'supplies:channel_detail' ch.pk %}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endif %}
+{% endblock %}

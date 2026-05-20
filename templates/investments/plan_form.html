@@ -1,0 +1,514 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>{{ page_title }}</h3>
+    <a href="{% url 'investments:plan_list' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-right"></i> العودة للقائمة
+    </a>
+</div>
+
+<form method="post" novalidate>
+    {% csrf_token %}
+
+    <!-- Plan Name -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <div class="mb-0">
+                <label for="{{ form.name.id_for_label }}" class="form-label fw-bold">اسم الخطة <span class="text-danger">*</span></label>
+                {{ form.name }}
+                {% if form.name.errors %}<div class="text-danger small mt-1">{{ form.name.errors }}</div>{% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Investment Matrix -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">جدول الاستثمارات الثابتة</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-bordered table-sm mb-0 investment-table">
+                    <thead class="table-dark text-center">
+                        <tr>
+                            <th style="min-width:230px; text-align:right;">البيان</th>
+                            <th style="min-width:130px;">الخطة الأصلية</th>
+                            <th style="min-width:130px;">الخطة المعدلة</th>
+                            <th style="min-width:110px;" class="table-warning">الفرق</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <!-- ١- الأراضي والمباني -->
+                        <tr class="section-header"><td colspan="4" class="fw-bold">١- الأراضي والمباني (Lands &amp; Buildings)</td></tr>
+                        <tr>
+                            <td>أراضي (Lands)</td>
+                            <td>{{ form.lands_original }}</td>
+                            <td>{{ form.lands_modified }}</td>
+                            <td class="diff-cell text-center" data-diff="lands">—</td>
+                        </tr>
+                        <tr>
+                            <td>مباني سكنية (Residential Buildings)</td>
+                            <td>{{ form.residential_buildings_original }}</td>
+                            <td>{{ form.residential_buildings_modified }}</td>
+                            <td class="diff-cell text-center" data-diff="residential_buildings">—</td>
+                        </tr>
+                        <tr>
+                            <td>مباني غير سكنية (Non-residential Buildings)</td>
+                            <td>{{ form.non_residential_buildings_original }}</td>
+                            <td>{{ form.non_residential_buildings_modified }}</td>
+                            <td class="diff-cell text-center" data-diff="non_residential_buildings">—</td>
+                        </tr>
+
+                        <!-- ٢- التشييدات -->
+                        <tr class="section-header"><td colspan="4" class="fw-bold">٢- التشييدات (Construction &amp; Improvements)</td></tr>
+                        <tr>
+                            <td>تشييدات (Constructions/Infrastructure)</td>
+                            <td>{{ form.constructions_original }}</td>
+                            <td>{{ form.constructions_modified }}</td>
+                            <td class="diff-cell text-center" data-diff="constructions">—</td>
+                        </tr>
+
+                        <!-- ٣- الآلات والمعدات -->
+                        <tr class="section-header"><td colspan="4" class="fw-bold">٣- الآلات والمعدات (Machinery &amp; Equipment)</td></tr>
+                        <tr>
+                            <td>محلي (Local)</td>
+                            <td>{{ form.machinery_local_original }}</td>
+                            <td>{{ form.machinery_local_modified }}</td>
+                            <td class="diff-cell text-center" data-diff="machinery_local">—</td>
+                        </tr>
+                        <tr>
+                            <td>أجنبي (Foreign)</td>
+                            <td>{{ form.machinery_foreign_original }}</td>
+                            <td>{{ form.machinery_foreign_modified }}</td>
+                            <td class="diff-cell text-center" data-diff="machinery_foreign">—</td>
+                        </tr>
+                        <tr>
+                            <td>تمويل ذاتي (Self-financed)</td>
+                            <td>{{ form.machinery_self_financed_original }}</td>
+                            <td>{{ form.machinery_self_financed_modified }}</td>
+                            <td class="diff-cell text-center" data-diff="machinery_self_financed">—</td>
+                        </tr>
+
+                        <!-- ٤- النقل والأثاث -->
+                        <tr class="section-header"><td colspan="4" class="fw-bold">٤- النقل والأثاث (Transport &amp; Furniture)</td></tr>
+                        <tr>
+                            <td>وسائل نقل (Means of Transport)</td>
+                            <td>{{ form.transport_means_original }}</td>
+                            <td>{{ form.transport_means_modified }}</td>
+                            <td class="diff-cell text-center" data-diff="transport_means">—</td>
+                        </tr>
+                        <tr>
+                            <td>أثاث وتجهيزات (Furniture &amp; Equipment)</td>
+                            <td>{{ form.furniture_equipment_original }}</td>
+                            <td>{{ form.furniture_equipment_modified }}</td>
+                            <td class="diff-cell text-center" data-diff="furniture_equipment">—</td>
+                        </tr>
+                        <tr>
+                            <td>ثروة حيوانية (Livestock)</td>
+                            <td>{{ form.livestock_original }}</td>
+                            <td>{{ form.livestock_modified }}</td>
+                            <td class="diff-cell text-center" data-diff="livestock">—</td>
+                        </tr>
+                        <tr class="subtotal-row">
+                            <td class="fw-bold">جملة (Sub-total)</td>
+                            <td>{{ form.transport_subtotal_original }}</td>
+                            <td>{{ form.transport_subtotal_modified }}</td>
+                            <td class="diff-cell text-center" data-diff="transport_subtotal">—</td>
+                        </tr>
+
+                        <!-- ٥- تجهيزات وأبحاث -->
+                        <tr class="section-header"><td colspan="4" class="fw-bold">٥- تجهيزات وأبحاث (Specialized Setup Costs)</td></tr>
+                        <tr>
+                            <td>تجهيزات (Setup/Technical Preparations)</td>
+                            <td>{{ form.setup_preparations_original }}</td>
+                            <td>{{ form.setup_preparations_modified }}</td>
+                            <td class="diff-cell text-center" data-diff="setup_preparations">—</td>
+                        </tr>
+                        <tr>
+                            <td>وسائل نقل وانتقال (Transport &amp; Travel Expenses)</td>
+                            <td>{{ form.transport_travel_expenses_original }}</td>
+                            <td>{{ form.transport_travel_expenses_modified }}</td>
+                            <td class="diff-cell text-center" data-diff="transport_travel_expenses">—</td>
+                        </tr>
+                        <tr>
+                            <td>أبحاث ودراسات (Research &amp; Studies)</td>
+                            <td>{{ form.research_studies_original }}</td>
+                            <td>{{ form.research_studies_modified }}</td>
+                            <td class="diff-cell text-center" data-diff="research_studies">—</td>
+                        </tr>
+                        <tr class="subtotal-row">
+                            <td class="fw-bold">جملة (Sub-total)</td>
+                            <td>{{ form.setup_subtotal_original }}</td>
+                            <td>{{ form.setup_subtotal_modified }}</td>
+                            <td class="diff-cell text-center" data-diff="setup_subtotal">—</td>
+                        </tr>
+
+                        <!-- ٦- الإجماليات -->
+                        <tr class="section-header"><td colspan="4" class="fw-bold">٦- الإجماليات (Final Totals)</td></tr>
+                        <tr class="subtotal-row">
+                            <td class="fw-bold">جملة الاستثمار الثابت (Total Fixed Investment)</td>
+                            <td>{{ form.total_fixed_investment_original }}</td>
+                            <td>{{ form.total_fixed_investment_modified }}</td>
+                            <td class="diff-cell text-center" data-diff="total_fixed_investment">—</td>
+                        </tr>
+                        <tr>
+                            <td>دفعات مقدمة واعتمادات مستندية (Advance Payments &amp; Letters of Credit)</td>
+                            <td>{{ form.advance_payments_original }}</td>
+                            <td>{{ form.advance_payments_modified }}</td>
+                            <td class="diff-cell text-center" data-diff="advance_payments">—</td>
+                        </tr>
+                        <tr class="subtotal-row grand-total-row">
+                            <td class="fw-bold">إجمالي الاستثمارات (Grand Total)</td>
+                            <td>{{ form.grand_total_original }}</td>
+                            <td>{{ form.grand_total_modified }}</td>
+                            <td class="diff-cell text-center" data-diff="grand_total">—</td>
+                        </tr>
+
+                        <!-- ٧- حقول إضافية -->
+                        <tr class="section-header"><td colspan="4" class="fw-bold">٧- بيانات إضافية</td></tr>
+                        <tr>
+                            <td>نسبه المنفذ</td>
+                            <td>
+                                <div class="input-group input-group-sm">
+                                    {{ form.nisbat_munaffaz_original }}
+                                    <span class="input-group-text">%</span>
+                                </div>
+                                <div class="nisbat-amount text-center mt-1">
+                                    <span data-nisbat-value="original">0.00</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group input-group-sm">
+                                    {{ form.nisbat_munaffaz_modified }}
+                                    <span class="input-group-text">%</span>
+                                </div>
+                                <div class="nisbat-amount text-center mt-1">
+                                    <span data-nisbat-value="modified">0.00</span>
+                                </div>
+                            </td>
+                            <td class="diff-cell text-center" data-diff="nisbat_munaffaz">—</td>
+                        </tr>
+                        <tr>
+                            <td>المتيقى</td>
+                            <td>{{ form.mutayyiqas_original }}</td>
+                            <td>{{ form.mutayyiqas_modified }}</td>
+                            <td class="diff-cell text-center" data-diff="mutayyiqas">—</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {# Hidden cached totals — recomputed from entries on save #}
+    <div style="display:none">
+        {{ form.manqool_minh_original }}{{ form.manqool_minh_modified }}
+        {{ form.manqool_ilaih_original }}{{ form.manqool_ilaih_modified }}
+    </div>
+
+    <!-- منقول منه / منقول اليه -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">منقول منه / منقول اليه</h5>
+            <button type="button" class="btn btn-light btn-sm" id="add-manqool-row">
+                <i class="bi bi-plus-lg"></i> إضافة سجل
+            </button>
+        </div>
+        <div class="card-body p-0">
+            {{ manqool_formset.management_form }}
+            <div class="table-responsive">
+                <table class="table table-bordered table-sm mb-0 manqool-table">
+                    <thead class="table-dark text-center">
+                        <tr>
+                            <th style="min-width:260px;">الحقل المصدر (منقول منه)</th>
+                            <th style="min-width:180px;">القيمة المنقولة</th>
+                            <th style="width:50px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="manqool-rows">
+                        {% for entry_form in manqool_formset %}
+                        <tr class="manqool-row" data-form-index="{{ forloop.counter0 }}">
+                            {% for hidden in entry_form.hidden_fields %}{{ hidden }}{% endfor %}
+                            <td>{{ entry_form.source_field }}</td>
+                            <td>{{ entry_form.main_value }}</td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-sm btn-outline-danger remove-manqool-row" title="حذف">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                                {% if entry_form.instance.pk %}
+                                    <div style="display:none">{{ entry_form.DELETE }}</div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-success">
+                            <td class="fw-bold text-end">إجمالي منقول اليه (مجموع المنقول)</td>
+                            <td class="text-center fw-bold" id="manqool-total">0.00</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="p-2 text-muted small">
+                <i class="bi bi-info-circle"></i>
+                يتم خصم القيمة المنقولة تلقائيًا من قيمة الخطة المعدلة للحقل المصدر، وتُحدَّث الإجماليات والفروق تلقائيًا.
+            </div>
+        </div>
+    </div>
+
+    {# Empty form template for JS cloning #}
+    <template id="manqool-empty-form">
+        <tr class="manqool-row" data-form-index="__prefix__">
+            <td>{{ manqool_formset.empty_form.source_field }}</td>
+            <td>{{ manqool_formset.empty_form.main_value }}</td>
+            <td class="text-center">
+                <button type="button" class="btn btn-sm btn-outline-danger remove-manqool-row" title="حذف">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        </tr>
+    </template>
+
+    <div class="d-flex gap-2 justify-content-end mb-4">
+        <a href="{% url 'investments:plan_list' %}" class="btn btn-outline-secondary">إلغاء</a>
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-save"></i> حفظ الخطة
+        </button>
+    </div>
+</form>
+
+<style>
+.investment-table .section-header td { background-color: #dbeafe; }
+.investment-table .subtotal-row td { background-color: #fef9c3; font-weight: 600; }
+.investment-table .grand-total-row td { background-color: #d1fae5; font-size: 1.05em; }
+.diff-cell { font-weight: 600; }
+.diff-positive { color: #16a34a; }
+.diff-negative { color: #dc2626; }
+.diff-zero { color: #6b7280; }
+.nisbat-amount { font-size: 1.15rem; font-weight: 700; color: #1f2937; }
+</style>
+
+<script>
+(function () {
+    function val(id) {
+        var el = document.getElementById(id);
+        return el ? (parseFloat(el.value) || 0) : 0;
+    }
+    function set(id, v) {
+        var el = document.getElementById(id);
+        if (el) el.value = v.toFixed(2);
+    }
+    function setDiff(key) {
+        var orig, mod;
+        if (key === 'nisbat_munaffaz') {
+            // Difference is between the *computed* amounts, not raw ratios.
+            var grandOrig = val('id_grand_total_original');
+            var grandMod  = val('id_grand_total_modified');
+            orig = (val('id_nisbat_munaffaz_original') / 100) * grandOrig;
+            mod  = (val('id_nisbat_munaffaz_modified')  / 100) * grandMod;
+        } else {
+            orig = val('id_' + key + '_original');
+            mod  = val('id_' + key + '_modified');
+        }
+        var diff = orig - mod;
+        var cell = document.querySelector('[data-diff="' + key + '"]');
+        if (cell) {
+            cell.textContent = (diff >= 0 ? '+' : '') + diff.toFixed(2);
+            cell.className = 'diff-cell text-center ' + (diff > 0 ? 'diff-positive' : diff < 0 ? 'diff-negative' : 'diff-zero');
+        }
+    }
+
+    function refreshNisbatValues() {
+        var grandOrig = val('id_grand_total_original');
+        var grandMod  = val('id_grand_total_modified');
+        var ratioOrig = val('id_nisbat_munaffaz_original');
+        var ratioMod  = val('id_nisbat_munaffaz_modified');
+        var origCell = document.querySelector('[data-nisbat-value="original"]');
+        var modCell  = document.querySelector('[data-nisbat-value="modified"]');
+        if (origCell) origCell.textContent = ((ratioOrig / 100) * grandOrig).toFixed(2);
+        if (modCell)  modCell.textContent  = ((ratioMod  / 100) * grandMod ).toFixed(2);
+    }
+
+    var TRANSPORT_ROWS = ['transport_means', 'furniture_equipment', 'livestock'];
+    var SETUP_ROWS     = ['setup_preparations', 'transport_travel_expenses', 'research_studies'];
+    var FIXED_ROWS     = [
+        'lands', 'residential_buildings', 'non_residential_buildings',
+        'constructions',
+        'machinery_local', 'machinery_foreign', 'machinery_self_financed',
+        'transport_subtotal', 'setup_subtotal'
+    ];
+    var ALL_KEYS = [
+        'lands', 'residential_buildings', 'non_residential_buildings',
+        'constructions',
+        'machinery_local', 'machinery_foreign', 'machinery_self_financed',
+        'transport_means', 'furniture_equipment', 'livestock', 'transport_subtotal',
+        'setup_preparations', 'transport_travel_expenses', 'research_studies', 'setup_subtotal',
+        'total_fixed_investment', 'advance_payments', 'grand_total',
+        'nisbat_munaffaz', 'mutayyiqas'
+    ];
+
+    function recompute(suffix) {
+        var tSub = TRANSPORT_ROWS.reduce(function(s, k) { return s + val('id_' + k + '_' + suffix); }, 0);
+        set('id_transport_subtotal_' + suffix, tSub);
+
+        var sSub = SETUP_ROWS.reduce(function(s, k) { return s + val('id_' + k + '_' + suffix); }, 0);
+        set('id_setup_subtotal_' + suffix, sSub);
+
+        var fixed = FIXED_ROWS.reduce(function(s, k) { return s + val('id_' + k + '_' + suffix); }, 0);
+        set('id_total_fixed_investment_' + suffix, fixed);
+
+        var grand = fixed + val('id_advance_payments_' + suffix);
+        set('id_grand_total_' + suffix, grand);
+    }
+
+    function refreshAllDiffs() {
+        ALL_KEYS.forEach(setDiff);
+        refreshNisbatValues();
+    }
+
+    document.querySelectorAll('.investment-table input[type=number]').forEach(function(input) {
+        input.addEventListener('input', function() {
+            var id = input.id;
+            var match = id.match(/^id_(.+)_(project|original|modified)$/);
+            if (match) {
+                var suffix = match[2];
+                if (suffix === 'original' || suffix === 'modified') {
+                    recompute(suffix);
+                }
+            }
+            refreshAllDiffs();
+        });
+    });
+
+    // ─── Manqool entries (formset) ──────────────────────────────────────
+    var totalForms = document.getElementById('id_manqool_minh_entries-TOTAL_FORMS');
+
+    function fmt(n) { return (Math.round(n * 100) / 100).toFixed(2); }
+
+    function adjustModifiedField(key, delta) {
+        if (!key) return;
+        var el = document.getElementById('id_' + key + '_modified');
+        if (!el) return;
+        var current = parseFloat(el.value) || 0;
+        el.value = (current + delta).toFixed(2);
+        recompute('modified');
+        refreshAllDiffs();
+    }
+
+    function getState(row) {
+        return {
+            source: row.dataset.appliedSource || '',
+            amount: parseFloat(row.dataset.appliedAmount) || 0,
+        };
+    }
+    function setState(row, source, amount) {
+        row.dataset.appliedSource = source || '';
+        row.dataset.appliedAmount = String(amount);
+    }
+    function isRowDeleted(row) {
+        var del = row.querySelector('input[name$="-DELETE"]');
+        return !!(del && del.checked);
+    }
+
+    function updateTotal() {
+        var total = 0;
+        document.querySelectorAll('#manqool-rows .manqool-row').forEach(function(row) {
+            if (isRowDeleted(row)) return;
+            total += parseFloat(row.querySelector('.manqool-main').value) || 0;
+        });
+        var totalEl = document.getElementById('manqool-total');
+        if (totalEl) totalEl.textContent = fmt(total);
+        var ilaih = document.getElementById('id_manqool_ilaih_modified');
+        if (ilaih) ilaih.value = fmt(total);
+        var minh = document.getElementById('id_manqool_minh_modified');
+        if (minh) minh.value = fmt(total);
+    }
+
+    function applyRow(row) {
+        var sourceSel = row.querySelector('.manqool-source');
+        var mainInput = row.querySelector('.manqool-main');
+        if (!sourceSel || !mainInput) return;
+        var prev = getState(row);
+        var currSource = sourceSel.value;
+        var currAmount = parseFloat(mainInput.value) || 0;
+
+        // restore previous deduction (if any)
+        if (prev.source) adjustModifiedField(prev.source, +prev.amount);
+        // apply new deduction
+        if (currSource) adjustModifiedField(currSource, -currAmount);
+
+        setState(row, currSource, currAmount);
+        updateTotal();
+    }
+
+    function restoreRow(row) {
+        var prev = getState(row);
+        if (prev.source) adjustModifiedField(prev.source, +prev.amount);
+        setState(row, '', 0);
+        updateTotal();
+    }
+
+    function bindRow(row) {
+        row.querySelectorAll('.manqool-source, .manqool-main').forEach(function(el) {
+            el.addEventListener('input', function() { applyRow(row); });
+            el.addEventListener('change', function() { applyRow(row); });
+        });
+        var removeBtn = row.querySelector('.remove-manqool-row');
+        if (removeBtn) {
+            removeBtn.addEventListener('click', function() {
+                restoreRow(row);
+                var del = row.querySelector('input[name$="-DELETE"]');
+                if (del) {
+                    del.checked = true;
+                    row.style.display = 'none';
+                } else {
+                    row.remove();
+                    if (totalForms) {
+                        totalForms.value = Math.max(0, parseInt(totalForms.value, 10) - 1);
+                    }
+                }
+                updateTotal();
+            });
+        }
+    }
+
+    // Initialize existing rows — their amount is already baked into the
+    // saved modified values, so we record state without re-applying.
+    document.querySelectorAll('#manqool-rows .manqool-row').forEach(function(row) {
+        var sourceSel = row.querySelector('.manqool-source');
+        var mainInput = row.querySelector('.manqool-main');
+        var src = sourceSel ? sourceSel.value : '';
+        var amt = mainInput ? (parseFloat(mainInput.value) || 0) : 0;
+        setState(row, src, amt);
+        bindRow(row);
+    });
+
+    var addBtn = document.getElementById('add-manqool-row');
+    if (addBtn && totalForms) {
+        addBtn.addEventListener('click', function() {
+            var tpl = document.getElementById('manqool-empty-form');
+            var idx = parseInt(totalForms.value, 10);
+            var html = tpl.innerHTML.replace(/__prefix__/g, idx);
+            var wrapper = document.createElement('tbody');
+            wrapper.innerHTML = html.trim();
+            var newRow = wrapper.firstElementChild;
+            document.getElementById('manqool-rows').appendChild(newRow);
+            totalForms.value = idx + 1;
+            setState(newRow, '', 0);
+            bindRow(newRow);
+            updateTotal();
+        });
+    }
+
+    refreshAllDiffs();
+    updateTotal();
+})();
+</script>
+{% endblock %}

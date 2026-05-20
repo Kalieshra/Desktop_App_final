@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3><i class="bi bi-wallet2"></i> {{ page_title }}</h3>
+    <a href="{% url 'budgets:budget_list' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-right"></i> العودة للقائمة
+    </a>
+</div>
+
+<form method="post" novalidate id="budget-form">
+    {% csrf_token %}
+
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <label for="{{ form.name.id_for_label }}" class="form-label fw-bold">
+                اسم الميزانية <span class="text-danger">*</span>
+            </label>
+            {{ form.name }}
+            {% if form.name.errors %}
+                <div class="text-danger small mt-1">{{ form.name.errors }}</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">أبواب الميزانية (1 - 6)</h5>
+        </div>
+        <div class="card-body p-0">
+            {{ chapter_formset.management_form }}
+            {% if chapter_formset.non_form_errors %}
+                <div class="alert alert-danger m-3">{{ chapter_formset.non_form_errors }}</div>
+            {% endif %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-sm mb-0 budget-table align-middle text-center">
+                    <thead class="table-dark">
+                        <tr>
+                            <th style="min-width:90px;">الباب</th>
+                            <th style="min-width:140px;">المبلغ الموزع</th>
+                            <th style="min-width:140px;">تعزيز</th>
+                            <th style="min-width:140px;">ارتباط</th>
+                            <th style="min-width:140px;">صرف</th>
+                            <th style="min-width:140px;" class="table-success">الرصيد المتبقي</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cform in chapter_formset %}
+                        <tr class="chapter-row">
+                            {% for hidden in cform.hidden_fields %}{{ hidden }}{% endfor %}
+                            <td class="fw-bold">
+                                باب {{ cform.initial.chapter_number|default:cform.instance.chapter_number|default:forloop.counter }}
+                            </td>
+                            <td>{{ cform.allocated }}</td>
+                            <td>{{ cform.reinforcement }}</td>
+                            <td>{{ cform.commitment }}</td>
+                            <td>{{ cform.expenditure }}</td>
+                            <td class="fw-bold text-success remaining-cell">0.00</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-warning fw-bold">
+                            <td>الإجماليات</td>
+                            <td id="total-allocated">0.00</td>
+                            <td id="total-reinforcement">0.00</td>
+                            <td id="total-commitment">0.00</td>
+                            <td id="total-expenditure">0.00</td>
+                            <td id="total-remaining" class="text-success">0.00</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="p-2 text-muted small">
+                <i class="bi bi-info-circle"></i>
+                الرصيد المتبقي = المبلغ الموزع + التعزيز + الارتباط − الصرف. الحقول الفارغة تُحسب كصفر.
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex gap-2 justify-content-end mb-4">
+        <a href="{% url 'budgets:budget_list' %}" class="btn btn-outline-secondary">إلغاء</a>
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-save"></i> حفظ
+        </button>
+    </div>
+</form>
+
+<style>
+.budget-table th { vertical-align: middle; }
+.budget-table input.form-control { text-align: center; }
+.remaining-cell { background-color: #ecfdf5; }
+</style>
+
+<script>
+(function () {
+    function toNum(v) { var n = parseFloat(v); return isNaN(n) ? 0 : n; }
+    function fmt(n) { return (Math.round(n * 100) / 100).toFixed(2); }
+
+    var rows = document.querySelectorAll('.budget-table .chapter-row');
+
+    function recompute() {
+        var totals = { allocated: 0, reinforcement: 0, commitment: 0, expenditure: 0, remaining: 0 };
+        rows.forEach(function (row) {
+            var alloc = toNum(row.querySelector('[name$="-allocated"]').value);
+            var rein  = toNum(row.querySelector('[name$="-reinforcement"]').value);
+            var comm  = toNum(row.querySelector('[name$="-commitment"]').value);
+            var exp   = toNum(row.querySelector('[name$="-expenditure"]').value);
+            var rem   = alloc + rein + comm - exp;
+            row.querySelector('.remaining-cell').textContent = fmt(rem);
+            totals.allocated += alloc;
+            totals.reinforcement += rein;
+            totals.commitment += comm;
+            totals.expenditure += exp;
+            totals.remaining += rem;
+        });
+        document.getElementById('total-allocated').textContent = fmt(totals.allocated);
+        document.getElementById('total-reinforcement').textContent = fmt(totals.reinforcement);
+        document.getElementById('total-commitment').textContent = fmt(totals.commitment);
+        document.getElementById('total-expenditure').textContent = fmt(totals.expenditure);
+        document.getElementById('total-remaining').textContent = fmt(totals.remaining);
+    }
+
+    document.querySelectorAll('.budget-table input.budget-num').forEach(function (el) {
+        el.addEventListener('input', recompute);
+        el.addEventListener('change', recompute);
+    });
+
+    document.getElementById('budget-form').addEventListener('submit', function () {
+        document.querySelectorAll('.budget-table input.budget-num').forEach(function (el) {
+            if (el.value === '' || el.value === null) el.value = '0';
+        });
+    });
+
+    recompute();
+})();
+</script>
+{% endblock %}

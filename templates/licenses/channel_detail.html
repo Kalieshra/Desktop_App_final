@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+
+{% block title %}{{ channel.name }} - التراخيص{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>تفاصيل القناة: {{ channel.name }}</h3>
+    <div>
+        <a href="{% url 'licenses:channel_update' channel.pk %}" class="btn btn-warning">
+            <i class="bi bi-pencil"></i> تعديل
+        </a>
+        <a href="{% url 'licenses:channel_delete' channel.pk %}" class="btn btn-danger">
+            <i class="bi bi-trash"></i> حذف
+        </a>
+        <a href="{% url 'licenses:channel_list' %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> رجوع
+        </a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <th class="table-light" style="width: 200px;">اسم القناة</th>
+                    <td>{{ channel.name }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">التاريخ</th>
+                    <td>{{ channel.date|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">أنشئ بواسطة</th>
+                    <td>{{ channel.created_by|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">تاريخ الإنشاء</th>
+                    <td>{{ channel.created_at }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">الحالة</th>
+                    <td>
+                        {% if channel.is_accepted %}
+                        <span class="badge bg-success">مقبول</span>
+                        {% else %}
+                        <span class="badge bg-danger">غير مقبول</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th class="table-light">تاريخ التعديل</th>
+                    <td>{{ channel.updated_at }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add buttons -->
+<div class="d-flex gap-2 mb-4 flex-wrap">
+    <a href="{% url 'licenses:place_license_create' %}?channel={{ channel.pk }}" class="btn btn-primary">
+        <i class="bi bi-building"></i> إضافة ترخيص مكاني
+    </a>
+    <a href="{% url 'licenses:personal_license_create' %}?channel={{ channel.pk }}" class="btn btn-success">
+        <i class="bi bi-person-badge"></i> إضافة ترخيص شخصي
+    </a>
+    <a href="{% url 'licenses:inspection_create' %}?channel={{ channel.pk }}" class="btn btn-info text-white">
+        <i class="bi bi-clipboard-check"></i> إضافة تفتيش
+    </a>
+</div>
+
+<!-- Timeline cards -->
+{% for record in records %}
+<div class="card border-0 shadow-sm mb-3 border-start border-4 {% if record.record_type == 'place_license' %}border-primary{% elif record.record_type == 'personal_license' %}border-success{% else %}border-info{% endif %}">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+            <div>
+                {% if record.record_type == 'place_license' %}
+                <span class="badge bg-primary mb-2"><i class="bi bi-building"></i> ترخيص مكاني</span>
+                {% elif record.record_type == 'personal_license' %}
+                <span class="badge bg-success mb-2"><i class="bi bi-person-badge"></i> ترخيص شخصي</span>
+                {% else %}
+                <span class="badge bg-info mb-2"><i class="bi bi-clipboard-check"></i> تفتيش</span>
+                {% endif %}
+                <small class="text-muted me-2">{{ record.created_at }}</small>
+            </div>
+            <div class="text-nowrap">
+                {% if record.record_type == 'place_license' %}
+                {% if not record.is_accepted %}
+                <form method="post" action="{% url 'licenses:place_license_toggle_accept' record.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-success" title="قبول">
+                        <i class="bi bi-check-circle"></i>
+                    </button>
+                </form>
+                {% else %}
+                <form method="post" action="{% url 'licenses:place_license_toggle_accept' record.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-danger" title="رفض">
+                        <i class="bi bi-x-circle"></i>
+                    </button>
+                </form>
+                {% endif %}
+                <a href="{% url 'licenses:place_license_update' record.pk %}" class="btn btn-sm btn-outline-warning" title="تعديل">
+                    <i class="bi bi-pencil"></i>
+                </a>
+                <a href="{% url 'licenses:place_license_delete' record.pk %}" class="btn btn-sm btn-outline-danger" title="حذف">
+                    <i class="bi bi-trash"></i>
+                </a>
+                {% elif record.record_type == 'personal_license' %}
+                {% if not record.is_accepted %}
+                <form method="post" action="{% url 'licenses:personal_license_toggle_accept' record.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-success" title="قبول">
+                        <i class="bi bi-check-circle"></i>
+                    </button>
+                </form>
+                {% else %}
+                <form method="post" action="{% url 'licenses:personal_license_toggle_accept' record.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-danger" title="رفض">
+                        <i class="bi bi-x-circle"></i>
+                    </button>
+                </form>
+                {% endif %}
+                <a href="{% url 'licenses:personal_license_update' record.pk %}" class="btn btn-sm btn-outline-warning" title="تعديل">
+                    <i class="bi bi-pencil"></i>
+                </a>
+                <a href="{% url 'licenses:personal_license_delete' record.pk %}" class="btn btn-sm btn-outline-danger" title="حذف">
+                    <i class="bi bi-trash"></i>
+                </a>
+                {% else %}
+                {% if not record.is_accepted %}
+                <form method="post" action="{% url 'licenses:inspection_toggle_accept' record.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-success" title="قبول">
+                        <i class="bi bi-check-circle"></i>
+                    </button>
+                </form>
+                {% else %}
+                <form method="post" action="{% url 'licenses:inspection_toggle_accept' record.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-danger" title="رفض">
+                        <i class="bi bi-x-circle"></i>
+                    </button>
+                </form>
+                {% endif %}
+                <a href="{% url 'licenses:inspection_update' record.pk %}" class="btn btn-sm btn-outline-warning" title="تعديل">
+                    <i class="bi bi-pencil"></i>
+                </a>
+                <a href="{% url 'licenses:inspection_delete' record.pk %}" class="btn btn-sm btn-outline-danger" title="حذف">
+                    <i class="bi bi-trash"></i>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row g-2">
+            {% if record.record_type == 'place_license' %}
+                <div class="col-md-3">
+                    <strong>مدة الترخيص:</strong> {{ record.license_duration|default:"-" }}
+                </div>
+                <div class="col-md-3">
+                    <strong>تاريخ من:</strong> {{ record.date_from|default:"-" }}
+                </div>
+                <div class="col-md-3">
+                    <strong>تاريخ إلى:</strong> {{ record.date_to|default:"-" }}
+                </div>
+                <div class="col-md-3">
+                    <strong>السداد:</strong>
+                    {% if record.is_paid %}
+                    <span class="badge bg-success">تم السداد</span>
+                    {% else %}
+                    <span class="badge bg-danger">لم يتم</span>
+                    {% endif %}
+                </div>
+                <div class="col-md-3">
+                    <strong>الحالة:</strong>
+                    {% if record.is_accepted %}
+                    <span class="badge bg-success">مقبول</span>
+                    {% else %}
+                    <span class="badge bg-danger">غير مقبول</span>
+                    {% endif %}
+                </div>
+
+            {% elif record.record_type == 'personal_license' %}
+                <div class="col-md-3">
+                    <strong>اسم المتقدم:</strong> {{ record.applicant_name }}
+                </div>
+                <div class="col-md-3">
+                    <strong>الفئة:</strong> {{ record.category|default:"-" }}
+                </div>
+                <div class="col-md-3">
+                    <strong>الوظيفة:</strong> {{ record.job|default:"-" }}
+                </div>
+                <div class="col-md-3">
+                    <strong>الهاتف:</strong> {{ record.phone|default:"-" }}
+                </div>
+                <div class="col-md-3">
+                    <strong>نوع الترخيص:</strong> {{ record.license_type|default:"-" }}
+                </div>
+                <div class="col-md-3">
+                    <strong>تاريخ من:</strong> {{ record.date_from|default:"-" }}
+                </div>
+                <div class="col-md-3">
+                    <strong>تاريخ إلى:</strong> {{ record.date_to|default:"-" }}
+                </div>
+                <div class="col-md-3">
+                    <strong>المدة:</strong> {{ record.license_duration|default:"-" }}
+                </div>
+                <div class="col-md-3">
+                    <strong>السداد:</strong>
+                    {% if record.is_paid %}
+                    <span class="badge bg-success">تم السداد</span>
+                    {% else %}
+                    <span class="badge bg-danger">لم يتم</span>
+                    {% endif %}
+                </div>
+                <div class="col-md-3">
+                    <strong>الحالة:</strong>
+                    {% if record.is_accepted %}
+                    <span class="badge bg-success">مقبول</span>
+                    {% else %}
+                    <span class="badge bg-danger">غير مقبول</span>
+                    {% endif %}
+                </div>
+
+            {% else %}
+                <div class="col-md-3">
+                    <strong>اسم المفتش:</strong> {{ record.inspector_name }}
+                </div>
+                <div class="col-md-3">
+                    <strong>الوظيفة:</strong> {{ record.job|default:"-" }}
+                </div>
+                <div class="col-md-3">
+                    <strong>جهة التفتيش:</strong> {{ record.authority|default:"-" }}
+                </div>
+                <div class="col-md-3">
+                    <strong>تاريخ الزيارة:</strong> {{ record.visit_date|default:"-" }}
+                </div>
+                <div class="col-md-3">
+                    <strong>النتيجة:</strong> {{ record.result|default:"-" }}
+                </div>
+                <div class="col-md-3">
+                    <strong>الحالة:</strong>
+                    {% if record.is_accepted %}
+                    <span class="badge bg-success">مقبول</span>
+                    {% else %}
+                    <span class="badge bg-danger">غير مقبول</span>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            {% if record.attachment %}
+            <div class="col-md-3">
+                <a href="{{ record.attachment.url }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                    <i class="bi bi-download"></i> تحميل المرفق
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% empty %}
+<div class="card border-0 shadow-sm">
+    <div class="card-body text-center py-5 text-muted">
+        لا توجد سجلات بعد. استخدم الأزرار أعلاه لإضافة تراخيص أو تفتيشات.
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

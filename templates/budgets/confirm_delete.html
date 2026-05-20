@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}حذف ميزانية{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-danger shadow-sm">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> تأكيد الحذف</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-3">هل أنت متأكد من حذف الميزانية؟</p>
+                <p class="fw-bold fs-5 text-danger">{{ object.name }}</p>
+                <p class="text-muted small">سيتم حذف جميع الأبواب التابعة لها. لا يمكن التراجع.</p>
+            </div>
+            <div class="card-footer d-flex justify-content-between">
+                <a href="{% url 'budgets:budget_list' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-circle"></i> إلغاء
+                </a>
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> تأكيد الحذف
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

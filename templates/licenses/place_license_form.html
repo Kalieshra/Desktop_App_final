@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% if object %}تعديل ترخيص مكاني{% else %}إضافة ترخيص مكاني{% endif %} - التراخيص
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>{% if object %}تعديل ترخيص مكاني{% else %}إضافة ترخيص مكاني جديد{% endif %}</h3>
+    <a href="{% url 'licenses:channel_list' %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-right"></i> رجوع
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                        <li>{{ field.label }}: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="{{ form.channel.id_for_label }}" class="form-label">القناة *</label>
+                    {{ form.channel }}
+                </div>
+                <div class="col-md-6">
+                    <label for="{{ form.license_duration.id_for_label }}" class="form-label">مدة الترخيص</label>
+                    {{ form.license_duration }}
+                </div>
+                <div class="col-md-4">
+                    <label for="{{ form.date_from.id_for_label }}" class="form-label">تاريخ من</label>
+                    {{ form.date_from }}
+                </div>
+                <div class="col-md-4">
+                    <label for="{{ form.date_to.id_for_label }}" class="form-label">تاريخ إلى</label>
+                    {{ form.date_to }}
+                </div>
+                <div class="col-md-2">
+                    <div class="form-check mt-4 pt-2">
+                        {{ form.is_paid }}
+                        <label for="{{ form.is_paid.id_for_label }}" class="form-check-label">تم السداد</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-check mt-4 pt-2">
+                        {{ form.is_accepted }}
+                        <label for="{{ form.is_accepted.id_for_label }}" class="form-check-label">مقبول</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label for="{{ form.attachment.id_for_label }}" class="form-label">المرفق</label>
+                    {{ form.attachment }}
+                    {% if object and object.attachment %}
+                    <small class="text-muted">الملف الحالي: <a href="{{ object.attachment.url }}" target="_blank">{{ object.attachment.name }}</a></small>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i>
+                    {% if object %}حفظ التعديلات{% else %}إضافة{% endif %}
+                </button>
+                <a href="{% url 'licenses:channel_list' %}" class="btn btn-outline-secondary">إلغاء</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% if object %}تعديل طلب شراء{% else %}إضافة طلب شراء{% endif %} - التوريدات
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>{% if object %}تعديل طلب شراء{% else %}إضافة طلب شراء جديد{% endif %}</h3>
+    <a href="{% url 'supplies:channel_list' %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-right"></i> رجوع
+    </a>
+</div>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {% if form.errors %}
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            {% for field in form %}
+                {% for error in field.errors %}
+                <li>{{ field.label }}: {{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- بيانات الطلب -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <h6 class="mb-0"><i class="bi bi-file-earmark-text"></i> بيانات الطلب</h6>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="{{ form.supply_channel.id_for_label }}" class="form-label">القناة *</label>
+                    {{ form.supply_channel }}
+                </div>
+                <div class="col-md-6">
+                    <label for="{{ form.requester_name.id_for_label }}" class="form-label">مقدم الطلب *</label>
+                    {{ form.requester_name }}
+                </div>
+                <div class="col-md-6">
+                    <label for="{{ form.job.id_for_label }}" class="form-label">الوظيفة</label>
+                    {{ form.job }}
+                </div>
+                <div class="col-md-6">
+                    <label for="{{ form.location.id_for_label }}" class="form-label">المكان</label>
+                    {{ form.location }}
+                </div>
+                <div class="col-12">
+                    <label for="{{ form.description.id_for_label }}" class="form-label">بيان</label>
+                    {{ form.description }}
+                </div>
+                <div class="col-md-6">
+                    <label for="{{ form.estimated_value.id_for_label }}" class="form-label">قيمة تقديرية</label>
+                    {{ form.estimated_value }}
+                </div>
+                <div class="col-md-6">
+                    <label for="{{ form.company_entity.id_for_label }}" class="form-label">الشركة/الجهة</label>
+                    {{ form.company_entity }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- العرض -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-warning text-dark">
+            <h6 class="mb-0"><i class="bi bi-tags"></i> العرض</h6>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4 col-6">
+                    <div class="form-check">
+                        {{ form.offer_envap }}
+                        <label class="form-check-label" for="{{ form.offer_envap.id_for_label }}">عرض Envap</label>
+                    </div>
+                </div>
+                <div class="col-md-4 col-6">
+                    <div class="form-check">
+                        {{ form.offer_first }}
+                        <label class="form-check-label" for="{{ form.offer_first.id_for_label }}">عرض أول</label>
+                    </div>
+                </div>
+                <div class="col-md-4 col-6">
+                    <div class="form-check">
+                        {{ form.offer_second }}
+                        <label class="form-check-label" for="{{ form.offer_second.id_for_label }}">عرض ثان</label>
+                    </div>
+                </div>
+                <div class="col-md-4 col-6">
+                    <div class="form-check">
+                        {{ form.offer_third }}
+                        <label class="form-check-label" for="{{ form.offer_third.id_for_label }}">عرض ثالث</label>
+                    </div>
+                </div>
+                <div class="col-md-4 col-6">
+                    <div class="form-check">
+                        {{ form.offer_divisible }}
+                        <label class="form-check-label" for="{{ form.offer_divisible.id_for_label }}">عرض قابل للتجزئة</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- محضر باللجان -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-info text-white">
+            <h6 class="mb-0"><i class="bi bi-people"></i> محضر باللجان</h6>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4 col-6">
+                    <div class="form-check">
+                        {{ form.committee_technical }}
+                        <label class="form-check-label" for="{{ form.committee_technical.id_for_label }}">لجنة فنية</label>
+                    </div>
+                </div>
+                <div class="col-md-4 col-6">
+                    <div class="form-check">
+                        {{ form.committee_legal }}
+                        <label class="form-check-label" for="{{ form.committee_legal.id_for_label }}">ش. قانونية</label>
+                    </div>
+                </div>
+                <div class="col-md-4 col-6">
+                    <div class="form-check">
+                        {{ form.committee_financial }}
+                        <label class="form-check-label" for="{{ form.committee_financial.id_for_label }}">ش. مالية</label>
+                    </div>
+                </div>
+                <div class="col-md-4 col-6">
+                    <div class="form-check">
+                        {{ form.committee_legal_signature }}
+                        <label class="form-check-label" for="{{ form.committee_legal_signature.id_for_label }}">توقيع ش. قانونية</label>
+                    </div>
+                </div>
+                <div class="col-md-4 col-6">
+                    <div class="form-check">
+                        {{ form.committee_supervisor_signature }}
+                        <label class="form-check-label" for="{{ form.committee_supervisor_signature.id_for_label }}">توقيع المشرف</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- مذكرة + رقم أمر التوريد + المرفق -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-secondary text-white">
+            <h6 class="mb-0"><i class="bi bi-paperclip"></i> مستندات إضافية</h6>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="{{ form.memo.id_for_label }}" class="form-label">مذكرة</label>
+                    {{ form.memo }}
+                    {% if object and object.memo %}
+                    <small class="text-muted">الملف الحالي: <a href="{{ object.memo.url }}" target="_blank">{{ object.memo.name }}</a></small>
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    <label for="{{ form.supply_order_no.id_for_label }}" class="form-label">استخراج أمر التوريد رقم</label>
+                    {{ form.supply_order_no }}
+                </div>
+                <div class="col-md-6">
+                    <label for="{{ form.attachment.id_for_label }}" class="form-label">المرفق</label>
+                    {{ form.attachment }}
+                    {% if object and object.attachment %}
+                    <small class="text-muted">الملف الحالي: <a href="{{ object.attachment.url }}" target="_blank">{{ object.attachment.name }}</a></small>
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    <div class="form-check mt-4">
+                        {{ form.is_accepted }}
+                        <label for="{{ form.is_accepted.id_for_label }}" class="form-check-label">مقبول</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-circle"></i>
+            {% if object %}حفظ التعديلات{% else %}إضافة{% endif %}
+        </button>
+        <a href="{% url 'supplies:channel_list' %}" class="btn btn-outline-secondary">إلغاء</a>
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}استيراد Excel - السفريات{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h3>استيراد من ملف Excel</h3>
+    <p class="text-muted">قم برفع ملف Excel لاستيراد بيانات السفريات</p>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <div class="mb-3">
+                <label for="{{ form.file.id_for_label }}" class="form-label">ملف Excel (.xlsx)</label>
+                {{ form.file }}
+                <div class="form-text">
+                    يجب أن يكون الملف بنفس تنسيق ملف travel.xlsx
+                    (رؤوس الأعمدة في الصف 7، البيانات تبدأ من الصف 9)
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-upload"></i> استيراد
+            </button>
+            <a href="{% url 'travel:list' %}" class="btn btn-outline-secondary">إلغاء</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

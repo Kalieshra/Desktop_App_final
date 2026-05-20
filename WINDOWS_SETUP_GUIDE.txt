@@ -1,0 +1,93 @@
+╔════════════════════════════════════════════════════════════════╗
+║                                                                ║
+║         WINDOWS INSTALLATION - QUICK START GUIDE               ║
+║                                                                ║
+╚════════════════════════════════════════════════════════════════╝
+
+📦 NEW: Now uses pytesseract - Windows-compatible OCR library!
+🌐 NEW: Chrome opens automatically when server starts!
+
+┌────────────────────────────────────────────────────────────────┐
+│  FIRST TIME INSTALLATION                                       │
+└────────────────────────────────────────────────────────────────┘
+
+1. Right-click "setup_windows.bat"
+2. Select "Run as administrator"
+3. Wait 5-10 minutes for automatic installation
+4. Chrome will open automatically to http://localhost:8000
+
+✅ That's it! The system is ready to use.
+
+┌────────────────────────────────────────────────────────────────┐
+│  SUBSEQUENT RUNS                                               │
+└────────────────────────────────────────────────────────────────┘
+
+1. Double-click "run.bat"
+2. Chrome opens automatically
+3. Start working!
+
+┌────────────────────────────────────────────────────────────────┐
+│  WHAT GETS INSTALLED AUTOMATICALLY                             │
+└────────────────────────────────────────────────────────────────┘
+
+✓ Python 3.13 (programming language)
+✓ Tesseract OCR (text recognition engine)
+✓ pytesseract (Windows-compatible OCR library)
+✓ Poppler (PDF processing)
+✓ Chocolatey (package manager)
+✓ All Python dependencies
+
+┌────────────────────────────────────────────────────────────────┐
+│  OCR FEATURES                                                  │
+└────────────────────────────────────────────────────────────────┘
+
+✓ Extract text from images (JPG, PNG, TIFF, BMP, WebP)
+✓ Extract text from PDF files
+✓ Arabic language support
+✓ English language support
+✓ High accuracy text recognition
+
+┌────────────────────────────────────────────────────────────────┐
+│  TROUBLESHOOTING                                               │
+└────────────────────────────────────────────────────────────────┘
+
+❌ "Access Denied" error
+   → Right-click setup_windows.bat and select "Run as administrator"
+
+❌ Port 8000 already in use
+   → Close any program using port 8000 (check Task Manager)
+
+❌ Chrome doesn't open automatically
+   → Manually open: http://localhost:8000
+   → Chrome may not be installed - will use default browser
+
+❌ OCR not working
+   → Check that tessdata folder has ara.traineddata & eng.traineddata
+   → Download from: https://github.com/tesseract-ocr/tessdata
+
+❌ Installation fails
+   → Check "setup.log" file for detailed error messages
+   → Try manual installation (see README_WINDOWS.md)
+
+┌────────────────────────────────────────────────────────────────┐
+│  SYSTEM REQUIREMENTS                                           │
+└────────────────────────────────────────────────────────────────┘
+
+• Windows 10 or Windows 11
+• 2GB free disk space
+• Internet connection (first-time setup only)
+• Administrator privileges (first-time setup only)
+
+┌────────────────────────────────────────────────────────────────┐
+│  NEED HELP?                                                    │
+└────────────────────────────────────────────────────────────────┘
+
+• Check "setup.log" for installation errors
+• Read "README_WINDOWS.md" for detailed instructions
+• Verify Tesseract is installed: Open cmd and type "tesseract --version"
+
+════════════════════════════════════════════════════════════════
+
+🎉 Enjoy your Windows-compatible Django application!
+
+════════════════════════════════════════════════════════════════

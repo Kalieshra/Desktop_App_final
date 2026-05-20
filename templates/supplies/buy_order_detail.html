@@ -1,0 +1,599 @@
+{% extends "base.html" %}
+
+{% block title %}تفاصيل طلب الشراء - التوريدات{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>تفاصيل طلب الشراء</h3>
+    <div>
+        <a href="{% url 'supplies:buy_order_update' buy_order.pk %}" class="btn btn-warning">
+            <i class="bi bi-pencil"></i> تعديل
+        </a>
+        <a href="{% url 'supplies:buy_order_delete' buy_order.pk %}" class="btn btn-danger">
+            <i class="bi bi-trash"></i> حذف
+        </a>
+        <a href="{% url 'supplies:channel_detail' buy_order.supply_channel_id %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> رجوع للقناة
+        </a>
+    </div>
+</div>
+
+<!-- Buy Order Info -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="bi bi-cart"></i> بيانات طلب الشراء</h5>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <th class="table-light" style="width: 200px;">القناة</th>
+                    <td>{{ buy_order.supply_channel.name }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">اسم مقدم الطلب</th>
+                    <td>{{ buy_order.requester_name }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">الوظيفة</th>
+                    <td>{{ buy_order.job|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">المكان</th>
+                    <td>{{ buy_order.location|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">البيان</th>
+                    <td>{{ buy_order.description|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">القيمة التقديرية</th>
+                    <td>{{ buy_order.estimated_value|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">الشركة/الجهة</th>
+                    <td>{{ buy_order.company_entity|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">العرض</th>
+                    <td>
+                        {% if buy_order.offer_envap %}<span class="badge bg-success me-1">عرض Envap</span>{% endif %}
+                        {% if buy_order.offer_first %}<span class="badge bg-success me-1">عرض أول</span>{% endif %}
+                        {% if buy_order.offer_second %}<span class="badge bg-success me-1">عرض ثان</span>{% endif %}
+                        {% if buy_order.offer_third %}<span class="badge bg-success me-1">عرض ثالث</span>{% endif %}
+                        {% if buy_order.offer_divisible %}<span class="badge bg-success me-1">عرض قابل للتجزئة</span>{% endif %}
+                        {% if not buy_order.offer_envap and not buy_order.offer_first and not buy_order.offer_second and not buy_order.offer_third and not buy_order.offer_divisible %}-{% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th class="table-light">محضر باللجان</th>
+                    <td>
+                        {% if buy_order.committee_technical %}<span class="badge bg-info me-1">لجنة فنية</span>{% endif %}
+                        {% if buy_order.committee_legal %}<span class="badge bg-info me-1">ش. قانونية</span>{% endif %}
+                        {% if buy_order.committee_financial %}<span class="badge bg-info me-1">ش. مالية</span>{% endif %}
+                        {% if buy_order.committee_legal_signature %}<span class="badge bg-info me-1">توقيع ش. قانونية</span>{% endif %}
+                        {% if buy_order.committee_supervisor_signature %}<span class="badge bg-info me-1">توقيع المشرف</span>{% endif %}
+                        {% if not buy_order.committee_technical and not buy_order.committee_legal and not buy_order.committee_financial and not buy_order.committee_legal_signature and not buy_order.committee_supervisor_signature %}-{% endif %}
+                    </td>
+                </tr>
+                {% if buy_order.memo %}
+                <tr>
+                    <th class="table-light">مذكرة</th>
+                    <td>
+                        <a href="{{ buy_order.memo.url }}" class="btn btn-sm btn-outline-secondary" target="_blank">
+                            <i class="bi bi-download"></i> تحميل المذكرة
+                        </a>
+                    </td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <th class="table-light">استخراج أمر التوريد رقم</th>
+                    <td>{{ buy_order.supply_order_no|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">الحالة</th>
+                    <td>
+                        {% if buy_order.is_accepted %}
+                        <span class="badge bg-success">مقبول</span>
+                        {% else %}
+                        <span class="badge bg-danger">غير مقبول</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% if buy_order.attachment %}
+                <tr>
+                    <th class="table-light">المرفق</th>
+                    <td>
+                        <a href="{{ buy_order.attachment.url }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                            <i class="bi bi-download"></i> تحميل المرفق
+                        </a>
+                    </td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <th class="table-light">تاريخ الإنشاء</th>
+                    <td>{{ buy_order.created_at }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Service Order Section -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0"><i class="bi bi-file-earmark-text"></i> أمر الخدمة</h5>
+    </div>
+    <div class="card-body">
+        {% if service_order %}
+        <table class="table table-bordered mb-3">
+            <tbody>
+                <tr>
+                    <th class="table-light" style="width: 200px;">Service Order No</th>
+                    <td>{{ service_order.service_order_no|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">Date</th>
+                    <td>{{ service_order.date|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">Object</th>
+                    <td>{{ service_order.object_description|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">Reference</th>
+                    <td>{{ service_order.reference|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">To INVAP</th>
+                    <td>
+                        {% if service_order.to_invap_reactor %}<span class="badge bg-success me-1">Al-Reactor / المفاعل</span>{% endif %}
+                        {% if service_order.to_invap_fuel %}<span class="badge bg-success me-1">Nuclear Fuel Factory / مصنع الوقود النووي</span>{% endif %}
+                        {% if service_order.to_invap_isotopes %}<span class="badge bg-success me-1">Radioactive Isotopes Factory / مصنع النظائر المشعة</span>{% endif %}
+                        {% if service_order.to_invap_uranium %}<span class="badge bg-success me-1">Uranium Factory / مصنع اليورانيو</span>{% endif %}
+                        {% if not service_order.to_invap_reactor and not service_order.to_invap_fuel and not service_order.to_invap_isotopes and not service_order.to_invap_uranium %}-{% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th class="table-light">Description</th>
+                    <td>{{ service_order.description|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">The signature</th>
+                    <td>{{ service_order.signature|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">الحالة</th>
+                    <td>
+                        {% if service_order.is_accepted %}
+                        <span class="badge bg-success">مقبول</span>
+                        {% else %}
+                        <span class="badge bg-danger">غير مقبول</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% if service_order.attachment %}
+                <tr>
+                    <th class="table-light">المرفق</th>
+                    <td>
+                        <a href="{{ service_order.attachment.url }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                            <i class="bi bi-download"></i> تحميل المرفق
+                        </a>
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+        <div>
+            {% if not service_order.is_accepted %}
+            <form method="post" action="{% url 'supplies:service_order_toggle_accept' service_order.pk %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success" title="قبول">
+                    <i class="bi bi-check-circle"></i> قبول أمر الخدمة
+                </button>
+            </form>
+            {% else %}
+            <form method="post" action="{% url 'supplies:service_order_toggle_accept' service_order.pk %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger" title="رفض">
+                    <i class="bi bi-x-circle"></i> رفض أمر الخدمة
+                </button>
+            </form>
+            {% endif %}
+            <a href="{% url 'supplies:service_order_update' service_order.pk %}" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> تعديل أمر الخدمة
+            </a>
+            <a href="{% url 'supplies:service_order_delete' service_order.pk %}" class="btn btn-danger">
+                <i class="bi bi-trash"></i> حذف أمر الخدمة
+            </a>
+        </div>
+        {% else %}
+        <p class="text-muted mb-3">لا يوجد أمر خدمة مرتبط بهذا الطلب.</p>
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#serviceOrderModal">
+            <i class="bi bi-plus-circle"></i> تحويل لأمر خدمة
+        </button>
+
+        <!-- Service Order Modal -->
+        <div class="modal fade" id="serviceOrderModal" tabindex="-1" aria-labelledby="serviceOrderModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <form method="post" action="{% url 'supplies:service_order_create' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="serviceOrderModalLabel">تحويل لأمر خدمة</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                        </div>
+                        <div class="modal-body">
+                            {{ service_order_form.buy_order }}
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="{{ service_order_form.service_order_no.id_for_label }}" class="form-label">Service Order No</label>
+                                    {{ service_order_form.service_order_no }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="{{ service_order_form.date.id_for_label }}" class="form-label">Date</label>
+                                    {{ service_order_form.date }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="{{ service_order_form.object_description.id_for_label }}" class="form-label">Object</label>
+                                    {{ service_order_form.object_description }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="{{ service_order_form.reference.id_for_label }}" class="form-label">Reference</label>
+                                    {{ service_order_form.reference }}
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">To INVAP</label>
+                                    <div class="row g-2">
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                {{ service_order_form.to_invap_reactor }}
+                                                <label class="form-check-label" for="{{ service_order_form.to_invap_reactor.id_for_label }}">Al-Reactor / المفاعل</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                {{ service_order_form.to_invap_fuel }}
+                                                <label class="form-check-label" for="{{ service_order_form.to_invap_fuel.id_for_label }}">Nuclear Fuel Factory / مصنع الوقود النووي</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                {{ service_order_form.to_invap_isotopes }}
+                                                <label class="form-check-label" for="{{ service_order_form.to_invap_isotopes.id_for_label }}">Radioactive Isotopes Factory / مصنع النظائر المشعة</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                {{ service_order_form.to_invap_uranium }}
+                                                <label class="form-check-label" for="{{ service_order_form.to_invap_uranium.id_for_label }}">Uranium Factory / مصنع اليورانيو</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="{{ service_order_form.signature.id_for_label }}" class="form-label">The signature</label>
+                                    {{ service_order_form.signature }}
+                                </div>
+                                <div class="col-12">
+                                    <label for="{{ service_order_form.description.id_for_label }}" class="form-label">Description</label>
+                                    {{ service_order_form.description }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="{{ service_order_form.attachment.id_for_label }}" class="form-label">attached</label>
+                                    {{ service_order_form.attachment }}
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check mt-4">
+                                        {{ service_order_form.is_accepted }}
+                                        <label for="{{ service_order_form.is_accepted.id_for_label }}" class="form-check-label">مقبول</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle"></i> حفظ أمر الخدمة
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- ATS Contract Section -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-file-earmark-ruled"></i> عقد ATS</h5>
+        <button type="button" class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#atsContractModal">
+            <i class="bi bi-plus-circle"></i> إضافة عقد ATS
+        </button>
+    </div>
+    <div class="card-body">
+        {% for contract in ats_contracts %}
+        <div class="card mb-3 border-start border-4 border-info">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                        <h6 class="mb-1">{{ contract.entity }}</h6>
+                        <small class="text-muted">{{ contract.created_at }}</small>
+                    </div>
+                    <div class="text-nowrap">
+                        <a href="{% url 'supplies:ats_contract_update' contract.pk %}" class="btn btn-sm btn-outline-warning" title="تعديل">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="{% url 'supplies:ats_contract_delete' contract.pk %}" class="btn btn-sm btn-outline-danger" title="حذف">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="row g-2">
+                    {% if contract.supply_order_no %}
+                    <div class="col-md-4"><strong>رقم أمر التوريد:</strong> {{ contract.supply_order_no }}</div>
+                    {% endif %}
+                    {% if contract.amount_dollar %}
+                    <div class="col-md-4"><strong>المبلغ بالدولار:</strong> {{ contract.amount_dollar }}</div>
+                    {% endif %}
+                    {% if contract.amount_egyptian %}
+                    <div class="col-md-4"><strong>المبلغ بالمصري:</strong> {{ contract.amount_egyptian }}</div>
+                    {% endif %}
+                    {% if contract.statement %}
+                    <div class="col-md-6"><strong>بيان:</strong> {{ contract.statement }}</div>
+                    {% endif %}
+                    {% if contract.supply_duration %}
+                    <div class="col-md-4"><strong>مدة التوريد:</strong> {{ contract.supply_duration }}</div>
+                    {% endif %}
+                    {% if contract.amount_fully_disbursed %}
+                    <div class="col-md-4"><strong>ما تم صرفه بالكامل:</strong> {{ contract.amount_fully_disbursed }}%</div>
+                    {% endif %}
+                    {% if contract.remaining %}
+                    <div class="col-md-4"><strong>الباقي:</strong> {{ contract.remaining }}</div>
+                    {% endif %}
+                    {% if contract.not_disbursed_current_year %}
+                    <div class="col-md-4"><strong>ما لم يتم صرفه السنة الحالية:</strong> {{ contract.not_disbursed_current_year }}</div>
+                    {% endif %}
+                    <div class="col-12">
+                        <strong>سنوات سابقة لم يتم التوريد:</strong>
+                        {% if contract.prev_year_2020 %}<span class="badge bg-secondary me-1">2020</span>{% endif %}
+                        {% if contract.prev_year_2021 %}<span class="badge bg-secondary me-1">2021</span>{% endif %}
+                        {% if contract.prev_year_2022 %}<span class="badge bg-secondary me-1">2022</span>{% endif %}
+                        {% if contract.prev_year_2023 %}<span class="badge bg-secondary me-1">2023</span>{% endif %}
+                        {% if contract.prev_year_2024 %}<span class="badge bg-secondary me-1">2024</span>{% endif %}
+                        {% if contract.prev_year_2025 %}<span class="badge bg-secondary me-1">2025</span>{% endif %}
+                        {% if contract.prev_year_2026 %}<span class="badge bg-secondary me-1">2026</span>{% endif %}
+                        {% if not contract.prev_year_2020 and not contract.prev_year_2021 and not contract.prev_year_2022 and not contract.prev_year_2023 and not contract.prev_year_2024 and not contract.prev_year_2025 and not contract.prev_year_2026 %}-{% endif %}
+                    </div>
+                    {% if contract.attachment %}
+                    <div class="col-md-4">
+                        <a href="{{ contract.attachment.url }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                            <i class="bi bi-download"></i> تحميل المرفق
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-muted text-center py-3">لا توجد عقود ATS بعد.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- ATS Contract Modal -->
+<div class="modal fade" id="atsContractModal" tabindex="-1" aria-labelledby="atsContractModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <form method="post" action="{% url 'supplies:ats_contract_create' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="atsContractModalLabel">إضافة عقد ATS</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                </div>
+                <div class="modal-body">
+                    {{ ats_contract_form.buy_order }}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="{{ ats_contract_form.entity.id_for_label }}" class="form-label">الجهة</label>
+                            {{ ats_contract_form.entity }}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ ats_contract_form.supply_order_no.id_for_label }}" class="form-label">رقم أمر التوريد</label>
+                            {{ ats_contract_form.supply_order_no }}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ ats_contract_form.amount_dollar.id_for_label }}" class="form-label">المبلغ بالدولار</label>
+                            {{ ats_contract_form.amount_dollar }}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ ats_contract_form.amount_egyptian.id_for_label }}" class="form-label">المبلغ بالمصري</label>
+                            {{ ats_contract_form.amount_egyptian }}
+                        </div>
+                        <div class="col-12">
+                            <label for="{{ ats_contract_form.statement.id_for_label }}" class="form-label">بيان</label>
+                            {{ ats_contract_form.statement }}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ ats_contract_form.supply_duration.id_for_label }}" class="form-label">مدة التوريد</label>
+                            {{ ats_contract_form.supply_duration }}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ ats_contract_form.amount_fully_disbursed.id_for_label }}" class="form-label">ما تم صرفه بالكامل (%)</label>
+                            <div class="input-group">
+                                {{ ats_contract_form.amount_fully_disbursed }}
+                                <span class="input-group-text">%</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ ats_contract_form.remaining.id_for_label }}" class="form-label">الباقي <small class="text-muted">(محسوب تلقائياً)</small></label>
+                            {{ ats_contract_form.remaining }}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ ats_contract_form.not_disbursed_current_year.id_for_label }}" class="form-label">ما لم يتم صرفه السنة الحالية</label>
+                            {{ ats_contract_form.not_disbursed_current_year }}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">سنوات سابقة لم يتم التوريد</label>
+                            <div class="row g-2">
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        {{ ats_contract_form.prev_year_2020 }}
+                                        <label class="form-check-label" for="{{ ats_contract_form.prev_year_2020.id_for_label }}">2020</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        {{ ats_contract_form.prev_year_2021 }}
+                                        <label class="form-check-label" for="{{ ats_contract_form.prev_year_2021.id_for_label }}">2021</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        {{ ats_contract_form.prev_year_2022 }}
+                                        <label class="form-check-label" for="{{ ats_contract_form.prev_year_2022.id_for_label }}">2022</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        {{ ats_contract_form.prev_year_2023 }}
+                                        <label class="form-check-label" for="{{ ats_contract_form.prev_year_2023.id_for_label }}">2023</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        {{ ats_contract_form.prev_year_2024 }}
+                                        <label class="form-check-label" for="{{ ats_contract_form.prev_year_2024.id_for_label }}">2024</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        {{ ats_contract_form.prev_year_2025 }}
+                                        <label class="form-check-label" for="{{ ats_contract_form.prev_year_2025.id_for_label }}">2025</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        {{ ats_contract_form.prev_year_2026 }}
+                                        <label class="form-check-label" for="{{ ats_contract_form.prev_year_2026.id_for_label }}">2026</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ ats_contract_form.attachment.id_for_label }}" class="form-label">مرفق</label>
+                            {{ ats_contract_form.attachment }}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-info text-white">
+                        <i class="bi bi-check-circle"></i> حفظ عقد ATS
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ATS Auto-Calculation Script -->
+<script>
+(function () {
+    function atsCalc() {
+        var dollar   = parseFloat(document.getElementById('id_amount_dollar').value)   || 0;
+        var egyptian = parseFloat(document.getElementById('id_amount_egyptian').value) || 0;
+        var pct      = parseFloat(document.getElementById('id_amount_fully_disbursed').value) || 0;
+        var total    = dollar > 0 ? dollar : egyptian;
+        var remaining = total > 0 ? (total * (1 - pct / 100)) : 0;
+        var remField = document.getElementById('id_remaining');
+        if (remField) remField.value = remaining > 0 ? remaining.toFixed(2) : '';
+    }
+    ['id_amount_dollar', 'id_amount_egyptian', 'id_amount_fully_disbursed'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.addEventListener('input', atsCalc);
+    });
+})();
+</script>
+
+<!-- Offers Section -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-tags"></i> العروض</h5>
+        <a href="{% url 'supplies:offer_create' %}?buy_order={{ buy_order.pk }}" class="btn btn-sm btn-dark">
+            <i class="bi bi-plus-circle"></i> إضافة عرض
+        </a>
+    </div>
+    <div class="card-body">
+        {% for offer in offers %}
+        <div class="card mb-3 border-start border-4 {% if offer.is_selected %}border-success{% else %}border-secondary{% endif %}">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                        <h6 class="mb-1">
+                            {{ offer.company_name }}
+                            {% if offer.is_selected %}
+                            <span class="badge bg-success ms-2"><i class="bi bi-check-circle"></i> العرض المختار</span>
+                            {% endif %}
+                        </h6>
+                        <small class="text-muted">{{ offer.created_at }}</small>
+                    </div>
+                    <div class="text-nowrap">
+                        {% if not offer.is_selected %}
+                        <form method="post" action="{% url 'supplies:offer_select' offer.pk %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-success" title="اختيار">
+                                <i class="bi bi-check-lg"></i>
+                            </button>
+                        </form>
+                        {% endif %}
+                        {% if not offer.is_accepted %}
+                        <form method="post" action="{% url 'supplies:offer_toggle_accept' offer.pk %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-success" title="قبول">
+                                <i class="bi bi-check-circle"></i>
+                            </button>
+                        </form>
+                        {% else %}
+                        <form method="post" action="{% url 'supplies:offer_toggle_accept' offer.pk %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-danger" title="رفض">
+                                <i class="bi bi-x-circle"></i>
+                            </button>
+                        </form>
+                        {% endif %}
+                        <a href="{% url 'supplies:offer_update' offer.pk %}" class="btn btn-sm btn-outline-warning" title="تعديل">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="{% url 'supplies:offer_delete' offer.pk %}" class="btn btn-sm btn-outline-danger" title="حذف">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="row g-2">
+                    <div class="col-md-4">
+                        <strong>السعر:</strong> {{ offer.price|default:"-" }}
+                    </div>
+                    {% if offer.description %}
+                    <div class="col-md-8">
+                        <strong>الوصف:</strong> {{ offer.description }}
+                    </div>
+                    {% endif %}
+                    {% if offer.attachment %}
+                    <div class="col-md-4">
+                        <a href="{{ offer.attachment.url }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                            <i class="bi bi-download"></i> تحميل المرفق
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-muted text-center py-3">لا توجد عروض بعد.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

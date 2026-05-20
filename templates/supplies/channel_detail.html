@@ -1,0 +1,577 @@
+{% extends "base.html" %}
+
+{% block title %}{{ channel.name }} - التوريدات{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>تفاصيل القناة: {{ channel.name }}</h3>
+    <div>
+        <a href="{% url 'supplies:channel_update' channel.pk %}" class="btn btn-warning">
+            <i class="bi bi-pencil"></i> تعديل
+        </a>
+        <a href="{% url 'supplies:channel_delete' channel.pk %}" class="btn btn-danger">
+            <i class="bi bi-trash"></i> حذف
+        </a>
+        <a href="{% url 'supplies:channel_list' %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> رجوع
+        </a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <th class="table-light" style="width: 200px;">اسم القناة</th>
+                    <td>{{ channel.name }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">التاريخ</th>
+                    <td>{{ channel.date|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">أنشئ بواسطة</th>
+                    <td>{{ channel.created_by|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">تاريخ الإنشاء</th>
+                    <td>{{ channel.created_at }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">الحالة</th>
+                    <td>
+                        {% if channel.is_accepted %}
+                        <span class="badge bg-success">مقبول</span>
+                        {% else %}
+                        <span class="badge bg-danger">غير مقبول</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th class="table-light">تاريخ التعديل</th>
+                    <td>{{ channel.updated_at }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add buttons -->
+<div class="d-flex gap-2 mb-4 flex-wrap">
+    <a href="{% url 'supplies:buy_order_create' %}?channel={{ channel.pk }}" class="btn btn-primary">
+        <i class="bi bi-cart-plus"></i> إضافة طلب شراء
+    </a>
+    <a href="{% url 'supplies:contract_operation_create' %}?channel={{ channel.pk }}" class="btn btn-dark">
+        <i class="bi bi-file-earmark-ruled"></i> إضافة عملية تعاقد
+    </a>
+    <a href="{% url 'supplies:tender_create' %}?channel={{ channel.pk }}" class="btn btn-success">
+        <i class="bi bi-journal-check"></i> إضافة مناقصة
+    </a>
+</div>
+
+<!-- Tenders Table -->
+{% if tenders %}
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+        <h6 class="mb-0"><i class="bi bi-journal-check"></i> المناقصات</h6>
+        <a href="{% url 'supplies:tender_create' %}?channel={{ channel.pk }}" class="btn btn-sm btn-light">
+            <i class="bi bi-plus-circle"></i> إضافة
+        </a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover mb-0 text-center align-middle">
+                <thead class="table-success">
+                    <tr>
+                        <th>اسم المناقصة</th>
+                        <th>محضر فحص شكلي</th>
+                        <th>بأمر إداري تشكيل</th>
+                        <th>محضر فني</th>
+                        <th>محضر 1</th>
+                        <th>تقرير فني</th>
+                        <th>محضر 2</th>
+                        <th>فتح مالي</th>
+                        <th>تقرير مالي</th>
+                        <th>محضر 3</th>
+                        <th>إخطار قبول العطاء</th>
+                        <th>ارتباط</th>
+                        <th>القيمة التقديرية</th>
+                        <th>محضر فض مظاريف</th>
+                        <th>مناقصات / مزايدات</th>
+                        <th>مرفق</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tender in tenders %}
+                    <tr>
+                        <td class="text-start">{{ tender.tender_name }}</td>
+                        <td>
+                            {% if tender.formal_inspection_minutes %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}-{% endif %}
+                            {% if tender.formal_inspection_minutes_attachment %}
+                            <a href="{{ tender.formal_inspection_minutes_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق">
+                                <i class="bi bi-download"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.admin_formation_order %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}-{% endif %}
+                            {% if tender.admin_formation_order_attachment %}
+                            <a href="{{ tender.admin_formation_order_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق">
+                                <i class="bi bi-download"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.technical_minutes %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}-{% endif %}
+                            {% if tender.technical_minutes_attachment %}
+                            <a href="{{ tender.technical_minutes_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق">
+                                <i class="bi bi-download"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.minutes_1 %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}-{% endif %}
+                            {% if tender.minutes_1_attachment %}
+                            <a href="{{ tender.minutes_1_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق">
+                                <i class="bi bi-download"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.technical_report %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}-{% endif %}
+                            {% if tender.technical_report_attachment %}
+                            <a href="{{ tender.technical_report_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق">
+                                <i class="bi bi-download"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.minutes_2 %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}-{% endif %}
+                            {% if tender.minutes_2_attachment %}
+                            <a href="{{ tender.minutes_2_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق">
+                                <i class="bi bi-download"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.financial_opening %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}-{% endif %}
+                            {% if tender.financial_opening_attachment %}
+                            <a href="{{ tender.financial_opening_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق">
+                                <i class="bi bi-download"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.financial_report %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}-{% endif %}
+                            {% if tender.financial_report_attachment %}
+                            <a href="{{ tender.financial_report_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق">
+                                <i class="bi bi-download"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.minutes_3 %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}-{% endif %}
+                            {% if tender.minutes_3_attachment %}
+                            <a href="{{ tender.minutes_3_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق">
+                                <i class="bi bi-download"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.bid_acceptance_notification %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}-{% endif %}
+                            {% if tender.bid_acceptance_notification_attachment %}
+                            <a href="{{ tender.bid_acceptance_notification_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق">
+                                <i class="bi bi-download"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.linking %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}-{% endif %}
+                            {% if tender.linking_attachment %}
+                            <a href="{{ tender.linking_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق">
+                                <i class="bi bi-download"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.estimated_value_minutes %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}-{% endif %}
+                            {% if tender.estimated_value_attachment %}
+                            <a href="{{ tender.estimated_value_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق">
+                                <i class="bi bi-download"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.envelope_opening_minutes %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}-{% endif %}
+                            {% if tender.envelope_opening_attachment %}
+                            <a href="{{ tender.envelope_opening_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق">
+                                <i class="bi bi-download"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.tender_type %}
+                            <span class="badge bg-success-subtle text-success border border-success-subtle">{{ tender.get_tender_type_display }}</span>
+                            {% else %}-{% endif %}
+                            {% if tender.tender_type_attachment %}
+                            <a href="{{ tender.tender_type_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق">
+                                <i class="bi bi-download"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tender.attachment %}
+                            <a href="{{ tender.attachment.url }}" class="btn btn-sm btn-outline-primary" target="_blank" title="تحميل المرفق">
+                                <i class="bi bi-download"></i>
+                            </a>
+                            {% else %}-{% endif %}
+                        </td>
+                        <td class="text-nowrap">
+                            <a href="{% url 'supplies:tender_update' tender.pk %}" class="btn btn-sm btn-outline-warning" title="تعديل">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'supplies:tender_delete' tender.pk %}" class="btn btn-sm btn-outline-danger" title="حذف">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Contract Operations Table -->
+{% if contract_operations %}
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+        <h6 class="mb-0"><i class="bi bi-file-earmark-ruled"></i> بيان أعمال التوريدات/صيانة/مقاولات</h6>
+        <a href="{% url 'supplies:contract_operation_create' %}?channel={{ channel.pk }}" class="btn btn-sm btn-light">
+            <i class="bi bi-plus-circle"></i> إضافة
+        </a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover mb-0 text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>اسم العملية</th>
+                        <th>جهة التعاقد</th>
+                        <th>تاريخ بداية التعاقد</th>
+                        <th>طريقة الإسناد</th>
+                        <th>المبلغ الإجمالي</th>
+                        <th>المبلغ المدفوع</th>
+                        <th>المبلغ المتبقي</th>
+                        <th>ملاحظات</th>
+                        <th>المرفق</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% regroup contract_operations by get_operation_type_display as ops_by_type %}
+                    {% for group in ops_by_type %}
+                    <tr class="table-secondary">
+                        <td colspan="10" class="fw-bold text-start ps-3">{{ group.grouper }}</td>
+                    </tr>
+                    {% for op in group.list %}
+                    <tr>
+                        <td>{{ op.operation_name }}</td>
+                        <td>{{ op.contracting_entity|default:"-" }}</td>
+                        <td>{{ op.contract_start_date|default:"-" }}</td>
+                        <td>{{ op.get_assignment_method_display|default:"-" }}</td>
+                        <td>{{ op.total_amount|default:"-" }}</td>
+                        <td>{{ op.amount_paid|default:"-" }}</td>
+                        <td class="{% if op.remaining_amount < 0 %}text-danger{% else %}text-success{% endif %}">
+                            {{ op.remaining_amount }}
+                        </td>
+                        <td>{{ op.notes|truncatewords:10|default:"-" }}</td>
+                        <td>
+                            {% if op.attachment %}
+                            <a href="{{ op.attachment.url }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                                <i class="bi bi-download"></i>
+                            </a>
+                            {% else %}-{% endif %}
+                        </td>
+                        <td class="text-nowrap">
+                            <a href="{% url 'supplies:contract_operation_update' op.pk %}" class="btn btn-sm btn-outline-warning" title="تعديل">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'supplies:contract_operation_delete' op.pk %}" class="btn btn-sm btn-outline-danger" title="حذف">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Timeline cards -->
+{% for record in records %}
+<div class="card border-0 shadow-sm mb-3 border-start border-4
+    {% if record.record_type == 'buy_order' %}border-primary
+    {% elif record.record_type == 'post' %}border-info
+    {% elif record.record_type == 'offer' %}border-warning
+    {% elif record.record_type == 'service_order' %}border-success
+    {% endif %}">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+            <div>
+                {% if record.record_type == 'buy_order' %}
+                <span class="badge bg-primary mb-2"><i class="bi bi-cart"></i> طلب شراء</span>
+                {% elif record.record_type == 'post' %}
+                <span class="badge bg-info mb-2"><i class="bi bi-megaphone"></i> منشور</span>
+                {% elif record.record_type == 'offer' %}
+                <span class="badge bg-warning text-dark mb-2"><i class="bi bi-tags"></i> عرض</span>
+                {% elif record.record_type == 'service_order' %}
+                <span class="badge bg-success mb-2"><i class="bi bi-file-earmark-text"></i> أمر خدمة</span>
+                {% endif %}
+                <small class="text-muted me-2">{{ record.created_at }}</small>
+            </div>
+            <div class="text-nowrap">
+                {% if record.record_type == 'buy_order' %}
+                <a href="{% url 'supplies:buy_order_detail' record.pk %}" class="btn btn-sm btn-outline-primary" title="التفاصيل">
+                    <i class="bi bi-eye"></i>
+                </a>
+                {% if not record.is_accepted %}
+                <form method="post" action="{% url 'supplies:buy_order_toggle_accept' record.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-success" title="قبول">
+                        <i class="bi bi-check-circle"></i>
+                    </button>
+                </form>
+                {% else %}
+                <form method="post" action="{% url 'supplies:buy_order_toggle_accept' record.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-danger" title="رفض">
+                        <i class="bi bi-x-circle"></i>
+                    </button>
+                </form>
+                {% endif %}
+                <a href="{% url 'supplies:buy_order_update' record.pk %}" class="btn btn-sm btn-outline-warning" title="تعديل">
+                    <i class="bi bi-pencil"></i>
+                </a>
+                <a href="{% url 'supplies:buy_order_delete' record.pk %}" class="btn btn-sm btn-outline-danger" title="حذف">
+                    <i class="bi bi-trash"></i>
+                </a>
+                {% elif record.record_type == 'offer' %}
+                {% if not record.is_selected %}
+                <form method="post" action="{% url 'supplies:offer_select' record.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-primary" title="اختيار">
+                        <i class="bi bi-check-lg"></i>
+                    </button>
+                </form>
+                {% endif %}
+                {% if not record.is_accepted %}
+                <form method="post" action="{% url 'supplies:offer_toggle_accept' record.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-success" title="قبول">
+                        <i class="bi bi-check-circle"></i>
+                    </button>
+                </form>
+                {% else %}
+                <form method="post" action="{% url 'supplies:offer_toggle_accept' record.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-danger" title="رفض">
+                        <i class="bi bi-x-circle"></i>
+                    </button>
+                </form>
+                {% endif %}
+                <a href="{% url 'supplies:offer_update' record.pk %}" class="btn btn-sm btn-outline-warning" title="تعديل">
+                    <i class="bi bi-pencil"></i>
+                </a>
+                <a href="{% url 'supplies:offer_delete' record.pk %}" class="btn btn-sm btn-outline-danger" title="حذف">
+                    <i class="bi bi-trash"></i>
+                </a>
+                {% elif record.record_type == 'service_order' %}
+                {% if not record.is_accepted %}
+                <form method="post" action="{% url 'supplies:service_order_toggle_accept' record.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-success" title="قبول">
+                        <i class="bi bi-check-circle"></i>
+                    </button>
+                </form>
+                {% else %}
+                <form method="post" action="{% url 'supplies:service_order_toggle_accept' record.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-danger" title="رفض">
+                        <i class="bi bi-x-circle"></i>
+                    </button>
+                </form>
+                {% endif %}
+                <a href="{% url 'supplies:service_order_update' record.pk %}" class="btn btn-sm btn-outline-warning" title="تعديل">
+                    <i class="bi bi-pencil"></i>
+                </a>
+                <a href="{% url 'supplies:service_order_delete' record.pk %}" class="btn btn-sm btn-outline-danger" title="حذف">
+                    <i class="bi bi-trash"></i>
+                </a>
+                {% else %}
+                {% if not record.is_accepted %}
+                <form method="post" action="{% url 'supplies:post_toggle_accept' record.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-success" title="قبول">
+                        <i class="bi bi-check-circle"></i>
+                    </button>
+                </form>
+                {% else %}
+                <form method="post" action="{% url 'supplies:post_toggle_accept' record.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-danger" title="رفض">
+                        <i class="bi bi-x-circle"></i>
+                    </button>
+                </form>
+                {% endif %}
+                <a href="{% url 'supplies:post_update' record.pk %}" class="btn btn-sm btn-outline-warning" title="تعديل">
+                    <i class="bi bi-pencil"></i>
+                </a>
+                <a href="{% url 'supplies:post_delete' record.pk %}" class="btn btn-sm btn-outline-danger" title="حذف">
+                    <i class="bi bi-trash"></i>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row g-2">
+            {% if record.record_type == 'buy_order' %}
+                <div class="col-md-3">
+                    <strong>اسم مقدم الطلب:</strong> {{ record.requester_name }}
+                </div>
+                <div class="col-md-3">
+                    <strong>الوظيفة:</strong> {{ record.job|default:"-" }}
+                </div>
+                <div class="col-md-3">
+                    <strong>المكان:</strong> {{ record.location|default:"-" }}
+                </div>
+                <div class="col-md-3">
+                    <strong>القيمة التقديرية:</strong> {{ record.estimated_value|default:"-" }}
+                </div>
+                {% if record.description %}
+                <div class="col-12">
+                    <strong>البيان:</strong> {{ record.description }}
+                </div>
+                {% endif %}
+                <div class="col-md-3">
+                    <strong>الحالة:</strong>
+                    {% if record.is_accepted %}
+                    <span class="badge bg-success">مقبول</span>
+                    {% else %}
+                    <span class="badge bg-danger">غير مقبول</span>
+                    {% endif %}
+                </div>
+            {% elif record.record_type == 'post' %}
+                <div class="col-md-4">
+                    <strong>العنوان:</strong> {{ record.name }}
+                </div>
+                <div class="col-md-4">
+                    <strong>التاريخ:</strong> {{ record.date|default:"-" }}
+                </div>
+                <div class="col-md-4">
+                    <strong>السعر:</strong> {{ record.price|default:"-" }}
+                </div>
+                {% if record.description %}
+                <div class="col-12">
+                    <strong>الوصف:</strong> {{ record.description }}
+                </div>
+                {% endif %}
+                <div class="col-md-3">
+                    <strong>الحالة:</strong>
+                    {% if record.is_accepted %}
+                    <span class="badge bg-success">مقبول</span>
+                    {% else %}
+                    <span class="badge bg-danger">غير مقبول</span>
+                    {% endif %}
+                </div>
+            {% elif record.record_type == 'offer' %}
+                <div class="col-md-4">
+                    <strong>اسم الشركة:</strong> {{ record.company_name }}
+                </div>
+                <div class="col-md-4">
+                    <strong>السعر:</strong> {{ record.price|default:"-" }}
+                </div>
+                {% if record.description %}
+                <div class="col-12">
+                    <strong>الوصف:</strong> {{ record.description }}
+                </div>
+                {% endif %}
+                <div class="col-md-3">
+                    <strong>الحالة:</strong>
+                    {% if record.is_selected %}
+                    <span class="badge bg-primary">مختار</span>
+                    {% endif %}
+                    {% if record.is_accepted %}
+                    <span class="badge bg-success">مقبول</span>
+                    {% else %}
+                    <span class="badge bg-danger">غير مقبول</span>
+                    {% endif %}
+                </div>
+            {% elif record.record_type == 'service_order' %}
+                <div class="col-md-3">
+                    <strong>Service Order No:</strong> {{ record.service_order_no|default:"-" }}
+                </div>
+                <div class="col-md-3">
+                    <strong>Date:</strong> {{ record.date|default:"-" }}
+                </div>
+                <div class="col-md-6">
+                    <strong>To INVAP:</strong>
+                    {% if record.to_invap_reactor %}<span class="badge bg-success me-1">Al-Reactor</span>{% endif %}
+                    {% if record.to_invap_fuel %}<span class="badge bg-success me-1">Nuclear Fuel</span>{% endif %}
+                    {% if record.to_invap_isotopes %}<span class="badge bg-success me-1">Isotopes</span>{% endif %}
+                    {% if record.to_invap_uranium %}<span class="badge bg-success me-1">Uranium</span>{% endif %}
+                    {% if not record.to_invap_reactor and not record.to_invap_fuel and not record.to_invap_isotopes and not record.to_invap_uranium %}-{% endif %}
+                </div>
+                <div class="col-md-3">
+                    <strong>The signature:</strong> {{ record.signature|default:"-" }}
+                </div>
+                {% if record.object_description %}
+                <div class="col-md-6">
+                    <strong>Object:</strong> {{ record.object_description }}
+                </div>
+                {% endif %}
+                {% if record.reference %}
+                <div class="col-md-3">
+                    <strong>Reference:</strong> {{ record.reference }}
+                </div>
+                {% endif %}
+                {% if record.description %}
+                <div class="col-12">
+                    <strong>Description:</strong> {{ record.description|truncatewords:30 }}
+                </div>
+                {% endif %}
+                <div class="col-md-3">
+                    <strong>الحالة:</strong>
+                    {% if record.is_accepted %}
+                    <span class="badge bg-success">مقبول</span>
+                    {% else %}
+                    <span class="badge bg-danger">غير مقبول</span>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            {% if record.attachment %}
+            <div class="col-md-3">
+                <a href="{{ record.attachment.url }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                    <i class="bi bi-download"></i> تحميل المرفق
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% empty %}
+<div class="card border-0 shadow-sm">
+    <div class="card-body text-center py-5 text-muted">
+        لا توجد سجلات بعد. استخدم الأزرار أعلاه لإضافة طلبات شراء أو منشورات.
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

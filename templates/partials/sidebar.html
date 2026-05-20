@@ -1,0 +1,139 @@
+{% load travel_tags %}
+<nav id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+        <h5 class="mb-0">
+            <i class="bi bi-airplane-engines"></i>
+            <span class="sidebar-text">هيئة الرقابة</span>
+        </h5>
+    </div>
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link {% active_nav 'travel:dashboard' %}" href="{% url 'travel:dashboard' %}">
+                <i class="bi bi-house-door"></i>
+                <span class="sidebar-text">لوحة التحكم</span>
+            </a>
+        </li>
+
+        <li class="nav-item sidebar-section-label">
+            <span class="sidebar-text">السفريات</span>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% active_nav 'travel:list' %}" href="{% url 'travel:list' %}">
+                <i class="bi bi-table"></i>
+                <span class="sidebar-text">السجلات</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% active_nav 'travel:create' %}" href="{% url 'travel:create' %}">
+                <i class="bi bi-plus-circle"></i>
+                <span class="sidebar-text">إضافة سجل</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% active_nav 'travel:travel_type_list' %}" href="{% url 'travel:travel_type_list' %}">
+                <i class="bi bi-tag"></i>
+                <span class="sidebar-text">أنواع السفريات</span>
+            </a>
+        </li>
+
+        <li class="nav-item sidebar-section-label">
+            <span class="sidebar-text">التراخيص</span>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% active_nav 'licenses:channel_list' %}" href="{% url 'licenses:channel_list' %}">
+                <i class="bi bi-diagram-3"></i>
+                <span class="sidebar-text">القنوات</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% active_nav 'licenses:channel_create' %}" href="{% url 'licenses:channel_create' %}">
+                <i class="bi bi-plus-circle"></i>
+                <span class="sidebar-text">إضافة قناة</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% active_nav 'licenses:place_license_create' %}" href="{% url 'licenses:place_license_create' %}">
+                <i class="bi bi-building"></i>
+                <span class="sidebar-text">ترخيص مكاني</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% active_nav 'licenses:personal_license_create' %}" href="{% url 'licenses:personal_license_create' %}">
+                <i class="bi bi-person-badge"></i>
+                <span class="sidebar-text">ترخيص شخصي</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% active_nav 'licenses:inspection_create' %}" href="{% url 'licenses:inspection_create' %}">
+                <i class="bi bi-clipboard-check"></i>
+                <span class="sidebar-text">تفتيش</span>
+            </a>
+        </li>
+
+        <li class="nav-item sidebar-section-label">
+            <span class="sidebar-text">التوريدات</span>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% active_nav 'supplies:channel_list' %}" href="{% url 'supplies:channel_list' %}">
+                <i class="bi bi-diagram-3"></i>
+                <span class="sidebar-text">القنوات</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% active_nav 'supplies:channel_create' %}" href="{% url 'supplies:channel_create' %}">
+                <i class="bi bi-plus-circle"></i>
+                <span class="sidebar-text">إضافة قناة</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% active_nav 'supplies:buy_order_create' %}" href="{% url 'supplies:buy_order_create' %}">
+                <i class="bi bi-cart-plus"></i>
+                <span class="sidebar-text">طلب شراء</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% active_nav 'supplies:contract_operation_create' %}" href="{% url 'supplies:contract_operation_create' %}">
+                <i class="bi bi-file-earmark-ruled"></i>
+                <span class="sidebar-text">عملية تعاقد</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% active_nav 'supplies:tender_list' %}" href="{% url 'supplies:tender_list' %}">
+                <i class="bi bi-journal-check"></i>
+                <span class="sidebar-text">المناقصات</span>
+            </a>
+        </li>
+
+        <li class="nav-item sidebar-section-label">
+            <span class="sidebar-text">خطط الاستثمار</span>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% active_nav 'investments:plan_list' %}" href="{% url 'investments:plan_list' %}">
+                <i class="bi bi-graph-up-arrow"></i>
+                <span class="sidebar-text">الخطط</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% active_nav 'investments:plan_create' %}" href="{% url 'investments:plan_create' %}">
+                <i class="bi bi-plus-circle"></i>
+                <span class="sidebar-text">إضافة خطة</span>
+            </a>
+        </li>
+
+        <li class="nav-item sidebar-section-label">
+            <span class="sidebar-text">الميزانيات</span>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% active_nav 'budgets:budget_list' %}" href="{% url 'budgets:budget_list' %}">
+                <i class="bi bi-wallet2"></i>
+                <span class="sidebar-text">الميزانيات</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% active_nav 'budgets:budget_create' %}" href="{% url 'budgets:budget_create' %}">
+                <i class="bi bi-plus-circle"></i>
+                <span class="sidebar-text">إضافة ميزانية</span>
+            </a>
+        </li>
+    </ul>
+</nav>

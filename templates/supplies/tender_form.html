@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% if object %}تعديل مناقصة{% else %}إضافة مناقصة جديدة{% endif %} - التوريدات
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>{% if object %}تعديل مناقصة{% else %}إضافة مناقصة جديدة{% endif %}</h3>
+    {% if channel %}
+    <a href="{% url 'supplies:channel_detail' channel.pk %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-right"></i> رجوع للقناة
+    </a>
+    {% else %}
+    <a href="{% url 'supplies:tender_list' %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-right"></i> رجوع للقائمة
+    </a>
+    {% endif %}
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-success text-white">
+        <h6 class="mb-0"><i class="bi bi-journal-check"></i> المناقصات</h6>
+    </div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.supply_channel }}
+
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                        <li>{{ field.label }}: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <div class="row g-3">
+                <div class="col-12">
+                    <label for="{{ form.tender_name.id_for_label }}" class="form-label fw-semibold">اسم المناقصة</label>
+                    {{ form.tender_name }}
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label fw-semibold">مراحل المناقصة</label>
+                    <div class="row g-3">
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-check mb-2">
+                                {{ form.formal_inspection_minutes }}
+                                <label class="form-check-label" for="{{ form.formal_inspection_minutes.id_for_label }}">محضر فحص شكلي</label>
+                            </div>
+                            {{ form.formal_inspection_minutes_attachment }}
+                            {% if object and object.formal_inspection_minutes_attachment %}
+                            <small class="text-muted d-block mt-1">الملف الحالي: <a href="{{ object.formal_inspection_minutes_attachment.url }}" target="_blank">{{ object.formal_inspection_minutes_attachment.name }}</a></small>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-check mb-2">
+                                {{ form.admin_formation_order }}
+                                <label class="form-check-label" for="{{ form.admin_formation_order.id_for_label }}">بأمر إداري تشكيل</label>
+                            </div>
+                            {{ form.admin_formation_order_attachment }}
+                            {% if object and object.admin_formation_order_attachment %}
+                            <small class="text-muted d-block mt-1">الملف الحالي: <a href="{{ object.admin_formation_order_attachment.url }}" target="_blank">{{ object.admin_formation_order_attachment.name }}</a></small>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-check mb-2">
+                                {{ form.technical_minutes }}
+                                <label class="form-check-label" for="{{ form.technical_minutes.id_for_label }}">محضر فني</label>
+                            </div>
+                            {{ form.technical_minutes_attachment }}
+                            {% if object and object.technical_minutes_attachment %}
+                            <small class="text-muted d-block mt-1">الملف الحالي: <a href="{{ object.technical_minutes_attachment.url }}" target="_blank">{{ object.technical_minutes_attachment.name }}</a></small>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-check mb-2">
+                                {{ form.minutes_1 }}
+                                <label class="form-check-label" for="{{ form.minutes_1.id_for_label }}">محضر 1 (إحالة للجنة البت)</label>
+                            </div>
+                            {{ form.minutes_1_attachment }}
+                            {% if object and object.minutes_1_attachment %}
+                            <small class="text-muted d-block mt-1">الملف الحالي: <a href="{{ object.minutes_1_attachment.url }}" target="_blank">{{ object.minutes_1_attachment.name }}</a></small>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-check mb-2">
+                                {{ form.technical_report }}
+                                <label class="form-check-label" for="{{ form.technical_report.id_for_label }}">تقرير فني</label>
+                            </div>
+                            {{ form.technical_report_attachment }}
+                            {% if object and object.technical_report_attachment %}
+                            <small class="text-muted d-block mt-1">الملف الحالي: <a href="{{ object.technical_report_attachment.url }}" target="_blank">{{ object.technical_report_attachment.name }}</a></small>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-check mb-2">
+                                {{ form.minutes_2 }}
+                                <label class="form-check-label" for="{{ form.minutes_2.id_for_label }}">محضر 2 (للجنة البت)</label>
+                            </div>
+                            {{ form.minutes_2_attachment }}
+                            {% if object and object.minutes_2_attachment %}
+                            <small class="text-muted d-block mt-1">الملف الحالي: <a href="{{ object.minutes_2_attachment.url }}" target="_blank">{{ object.minutes_2_attachment.name }}</a></small>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-check mb-2">
+                                {{ form.financial_opening }}
+                                <label class="form-check-label" for="{{ form.financial_opening.id_for_label }}">فتح مالي</label>
+                            </div>
+                            {{ form.financial_opening_attachment }}
+                            {% if object and object.financial_opening_attachment %}
+                            <small class="text-muted d-block mt-1">الملف الحالي: <a href="{{ object.financial_opening_attachment.url }}" target="_blank">{{ object.financial_opening_attachment.name }}</a></small>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-check mb-2">
+                                {{ form.financial_report }}
+                                <label class="form-check-label" for="{{ form.financial_report.id_for_label }}">تقرير مالي</label>
+                            </div>
+                            {{ form.financial_report_attachment }}
+                            {% if object and object.financial_report_attachment %}
+                            <small class="text-muted d-block mt-1">الملف الحالي: <a href="{{ object.financial_report_attachment.url }}" target="_blank">{{ object.financial_report_attachment.name }}</a></small>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-check mb-2">
+                                {{ form.minutes_3 }}
+                                <label class="form-check-label" for="{{ form.minutes_3.id_for_label }}">محضر 3 (ترشية العطاء)</label>
+                            </div>
+                            {{ form.minutes_3_attachment }}
+                            {% if object and object.minutes_3_attachment %}
+                            <small class="text-muted d-block mt-1">الملف الحالي: <a href="{{ object.minutes_3_attachment.url }}" target="_blank">{{ object.minutes_3_attachment.name }}</a></small>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-check mb-2">
+                                {{ form.bid_acceptance_notification }}
+                                <label class="form-check-label" for="{{ form.bid_acceptance_notification.id_for_label }}">إخطار قبول العطاء</label>
+                            </div>
+                            {{ form.bid_acceptance_notification_attachment }}
+                            {% if object and object.bid_acceptance_notification_attachment %}
+                            <small class="text-muted d-block mt-1">الملف الحالي: <a href="{{ object.bid_acceptance_notification_attachment.url }}" target="_blank">{{ object.bid_acceptance_notification_attachment.name }}</a></small>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <hr class="my-2">
+                    <label class="form-label fw-semibold">بنود إضافية</label>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="form-check mb-2">
+                                {{ form.linking }}
+                                <label class="form-check-label" for="{{ form.linking.id_for_label }}">ارتباط</label>
+                            </div>
+                            <label for="{{ form.linking_attachment.id_for_label }}" class="form-label small text-muted">مرفق الارتباط</label>
+                            {{ form.linking_attachment }}
+                            {% if object and object.linking_attachment %}
+                            <small class="text-muted d-block mt-1">الملف الحالي: <a href="{{ object.linking_attachment.url }}" target="_blank">{{ object.linking_attachment.name }}</a></small>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check mb-2">
+                                {{ form.estimated_value_minutes }}
+                                <label class="form-check-label" for="{{ form.estimated_value_minutes.id_for_label }}">القيمة التقديرية</label>
+                            </div>
+                            <label for="{{ form.estimated_value_attachment.id_for_label }}" class="form-label small text-muted">مرفق القيمة التقديرية</label>
+                            {{ form.estimated_value_attachment }}
+                            {% if object and object.estimated_value_attachment %}
+                            <small class="text-muted d-block mt-1">الملف الحالي: <a href="{{ object.estimated_value_attachment.url }}" target="_blank">{{ object.estimated_value_attachment.name }}</a></small>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check mb-2">
+                                {{ form.envelope_opening_minutes }}
+                                <label class="form-check-label" for="{{ form.envelope_opening_minutes.id_for_label }}">محضر فض مظاريف</label>
+                            </div>
+                            <label for="{{ form.envelope_opening_attachment.id_for_label }}" class="form-label small text-muted">مرفق محضر فض مظاريف</label>
+                            {{ form.envelope_opening_attachment }}
+                            {% if object and object.envelope_opening_attachment %}
+                            <small class="text-muted d-block mt-1">الملف الحالي: <a href="{{ object.envelope_opening_attachment.url }}" target="_blank">{{ object.envelope_opening_attachment.name }}</a></small>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <hr class="my-2">
+                    <label class="form-label fw-semibold">مناقصات / مزايدات</label>
+                    <div class="row g-3 align-items-start">
+                        <div class="col-md-6">
+                            <div class="d-flex gap-4">
+                                {% for radio in form.tender_type %}
+                                <div class="form-check">
+                                    {{ radio.tag }}
+                                    <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.tender_type_attachment.id_for_label }}" class="form-label small text-muted">مرفق مناقصات / مزايدات</label>
+                            {{ form.tender_type_attachment }}
+                            {% if object and object.tender_type_attachment %}
+                            <small class="text-muted d-block mt-1">الملف الحالي: <a href="{{ object.tender_type_attachment.url }}" target="_blank">{{ object.tender_type_attachment.name }}</a></small>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="{{ form.attachment.id_for_label }}" class="form-label">مرفق</label>
+                    {{ form.attachment }}
+                    {% if object and object.attachment %}
+                    <small class="text-muted">الملف الحالي: <a href="{{ object.attachment.url }}" target="_blank">{{ object.attachment.name }}</a></small>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-circle"></i>
+                    {% if object %}حفظ التعديلات{% else %}إضافة المناقصة{% endif %}
+                </button>
+                <button type="button" class="btn btn-outline-secondary" onclick="history.back()">إلغاء</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

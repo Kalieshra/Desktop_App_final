@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% if object %}Edit Service Order{% else %}Add Service Order{% endif %} - التوريدات
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>{% if object %}Edit Service Order{% else %}Add Service Order{% endif %}</h3>
+    {% if object %}
+    <a href="{% url 'supplies:buy_order_detail' object.buy_order_id %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-right"></i> Back
+    </a>
+    {% else %}
+    <a href="{% url 'supplies:channel_list' %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-right"></i> Back
+    </a>
+    {% endif %}
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-success text-white">
+        <h6 class="mb-0"><i class="bi bi-file-earmark-text"></i> Service Order</h6>
+    </div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.buy_order }}
+
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                        <li>{{ field.label }}: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="{{ form.service_order_no.id_for_label }}" class="form-label">Service Order No</label>
+                    {{ form.service_order_no }}
+                </div>
+                <div class="col-md-6">
+                    <label for="{{ form.date.id_for_label }}" class="form-label">Date</label>
+                    {{ form.date }}
+                </div>
+                <div class="col-md-6">
+                    <label for="{{ form.object_description.id_for_label }}" class="form-label">Object</label>
+                    {{ form.object_description }}
+                </div>
+                <div class="col-md-6">
+                    <label for="{{ form.reference.id_for_label }}" class="form-label">Reference</label>
+                    {{ form.reference }}
+                </div>
+                <div class="col-12">
+                    <label class="form-label fw-semibold">To INVAP</label>
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                {{ form.to_invap_reactor }}
+                                <label class="form-check-label" for="{{ form.to_invap_reactor.id_for_label }}">Al-Reactor / المفاعل</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                {{ form.to_invap_fuel }}
+                                <label class="form-check-label" for="{{ form.to_invap_fuel.id_for_label }}">Nuclear Fuel Factory / مصنع الوقود النووي</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                {{ form.to_invap_isotopes }}
+                                <label class="form-check-label" for="{{ form.to_invap_isotopes.id_for_label }}">Radioactive Isotopes Factory / مصنع النظائر المشعة</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                {{ form.to_invap_uranium }}
+                                <label class="form-check-label" for="{{ form.to_invap_uranium.id_for_label }}">Uranium Factory / مصنع اليورانيو</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label for="{{ form.signature.id_for_label }}" class="form-label">The signature</label>
+                    {{ form.signature }}
+                </div>
+                <div class="col-12">
+                    <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+                    {{ form.description }}
+                </div>
+                <div class="col-md-6">
+                    <label for="{{ form.attachment.id_for_label }}" class="form-label">attached</label>
+                    {{ form.attachment }}
+                    {% if object and object.attachment %}
+                    <small class="text-muted">Current file: <a href="{{ object.attachment.url }}" target="_blank">{{ object.attachment.name }}</a></small>
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    <div class="form-check mt-4">
+                        {{ form.is_accepted }}
+                        <label for="{{ form.is_accepted.id_for_label }}" class="form-check-label">مقبول</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-circle"></i>
+                    {% if object %}Save Changes{% else %}Add{% endif %}
+                </button>
+                <button type="button" class="btn btn-outline-secondary" onclick="history.back()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

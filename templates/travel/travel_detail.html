@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}{{ travel.name }} - السفريات{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>تفاصيل السجل</h3>
+    <div>
+        <a href="{% url 'travel:update' travel.pk %}" class="btn btn-warning">
+            <i class="bi bi-pencil"></i> تعديل
+        </a>
+        <a href="{% url 'travel:delete' travel.pk %}" class="btn btn-danger">
+            <i class="bi bi-trash"></i> حذف
+        </a>
+        <a href="{% url 'travel:list' %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-right"></i> رجوع
+        </a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <th class="table-light" style="width: 200px;">الاسم</th>
+                    <td>{{ travel.name }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">اللقب</th>
+                    <td>{{ travel.title|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">الجهة</th>
+                    <td>{{ travel.department|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">الوظيفة</th>
+                    <td>{{ travel.position|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">نوع السفرية</th>
+                    <td>{{ travel.travel_type.name|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">اسم الدورة التدريبية</th>
+                    <td>{{ travel.course_name|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">مكان إنعقاد الدورة</th>
+                    <td>{{ travel.course_location|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">تاريخ من</th>
+                    <td>{{ travel.date_from|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">تاريخ إلى</th>
+                    <td>{{ travel.date_to|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">DadLine</th>
+                    <td>{{ travel.deadline|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">المتابعة</th>
+                    <td>{{ travel.followup|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">المرفق</th>
+                    <td>
+                        {% if travel.attachment %}
+                        <a href="{{ travel.attachment.url }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                            <i class="bi bi-download"></i> تحميل المرفق
+                        </a>
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th class="table-light">Event Code</th>
+                    <td>{{ travel.event_code|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">إجمالي سفريات</th>
+                    <td>{{ travel.total_travels|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">صادر</th>
+                    <td>{{ travel.sader|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">الحالة</th>
+                    <td>
+                        {% if travel.is_accepted %}
+                        <span class="badge bg-success">مقبول</span>
+                        {% else %}
+                        <span class="badge bg-danger">غير مقبول</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th class="table-light">APS</th>
+                    <td>
+                        {% if travel.aps %}
+                        <span class="badge bg-success"><i class="bi bi-check-circle"></i> نعم</span>
+                        {% else %}
+                        <span class="badge bg-secondary"><i class="bi bi-x-circle"></i> لا</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th class="table-light">لجنه النشر</th>
+                    <td>
+                        {% if travel.publish_committee %}
+                        <span class="badge bg-success"><i class="bi bi-check-circle"></i> نعم</span>
+                        {% else %}
+                        <span class="badge bg-secondary"><i class="bi bi-x-circle"></i> لا</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th class="table-light">عرض مرئي</th>
+                    <td>
+                        {% if travel.visual_presentation %}
+                        <span class="badge bg-success"><i class="bi bi-check-circle"></i> نعم</span>
+                        {% else %}
+                        <span class="badge bg-secondary"><i class="bi bi-x-circle"></i> لا</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th class="table-light">تاريخ الإنشاء</th>
+                    <td>{{ travel.created_at }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">تاريخ التعديل</th>
+                    <td>{{ travel.updated_at }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

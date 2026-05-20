@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}حذف سجل - السفريات{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h3>تأكيد الحذف</h3>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <div class="alert alert-danger">
+            <i class="bi bi-exclamation-triangle"></i>
+            هل أنت متأكد من حذف هذا السجل؟ هذا الإجراء لا يمكن التراجع عنه.
+        </div>
+
+        <table class="table table-bordered mb-4">
+            <tbody>
+                <tr>
+                    <th class="table-light" style="width: 200px;">الاسم</th>
+                    <td>{{ object.name }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">اللقب</th>
+                    <td>{{ object.title|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">نوع الدورة</th>
+                    <td>{{ object.course_type|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">مكان الدورة</th>
+                    <td>{{ object.course_location|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th class="table-light">تاريخ من</th>
+                    <td>{{ object.date_from|default:"-" }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">
+                <i class="bi bi-trash"></i> تأكيد الحذف
+            </button>
+            <a href="{% url 'travel:detail' object.pk %}" class="btn btn-secondary">إلغاء</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

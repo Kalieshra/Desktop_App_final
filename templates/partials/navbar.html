@@ -1,0 +1,11 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom px-4">
+    <button class="btn btn-outline-secondary me-3" id="sidebarToggle" type="button">
+        <i class="bi bi-list"></i>
+    </button>
+    <span class="navbar-brand mb-0 h5">{% block page_title %}هندسة المفاعلات{% endblock %}</span>
+    <div class="ms-auto">
+        <a href="{% url 'travel:backup' %}" class="btn btn-outline-warning" title="تصدير نسخة احتياطية">
+            <i class="bi bi-download"></i> Backup
+        </a>
+    </div>
+</nav>
