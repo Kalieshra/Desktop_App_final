@@ -57,6 +57,7 @@
                         <th>اللقب</th>
                         <th>الجهة</th>
                         <th>نوع السفرية</th>
+                        <th>اسم الدورة التدريبية</th>
                         <th>مكان الدورة</th>
                         <th>تاريخ من</th>
                         <th>تاريخ إلى</th>
@@ -72,6 +73,7 @@
                         <td>{{ t.title }}</td>
                         <td>{{ t.department|default:"-" }}</td>
                         <td>{{ t.travel_type.name|default:"-" }}</td>
+                        <td>{{ t.course_name|default:"-" }}</td>
                         <td>{{ t.course_location|default:"-" }}</td>
                         <td>{{ t.date_from|default:"-" }}</td>
                         <td>{{ t.date_to|default:"-" }}</td>
@@ -111,7 +113,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="10" class="text-center py-4 text-muted">لا توجد سجلات</td>
+                        <td colspan="11" class="text-center py-4 text-muted">لا توجد سجلات</td>
                     </tr>
                     {% endfor %}
                 </tbody>

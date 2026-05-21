@@ -23,26 +23,30 @@
             <table class="table table-hover table-striped mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>#</th>
-                        <th>اللقب</th>
-                        <th>نوع السفرية</th>
-                        <th>اسم الدورة</th>
-                        <th>مكان الدورة</th>
+                        <th>اسم المسافر</th>
+                        <th>عدد السفريات</th>
+                        <th>اسم الدورة التدريبية</th>
+                        <th>البلد</th>
                         <th>تاريخ من</th>
                         <th>تاريخ إلى</th>
+                        <th>DeadLine</th>
                         <th>الإجراءات</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for t in travels %}
                     <tr>
-                        <td>{{ t.pk|arabic_number }}</td>
-                        <td>{{ t.title|default:"-" }}</td>
-                        <td>{{ t.travel_type.name|default:"-" }}</td>
+                        <td>{{ t.name }}</td>
+                        <td>
+                            <span class="badge bg-primary" title="إجمالي سفريات {{ t.name }}">
+                                {{ travels_count|arabic_number }}
+                            </span>
+                        </td>
                         <td>{{ t.course_name|default:"-" }}</td>
                         <td>{{ t.course_location|default:"-" }}</td>
                         <td>{{ t.date_from|default:"-" }}</td>
                         <td>{{ t.date_to|default:"-" }}</td>
+                        <td>{{ t.deadline|default:"-" }}</td>
                         <td>
                             <a href="{% url 'travel:detail' t.pk %}" class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-eye"></i> التفاصيل

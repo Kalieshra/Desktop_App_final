@@ -45,6 +45,7 @@
                     <tr>
                         <th>اسم المسافر</th>
                         <th>عدد السفريات</th>
+                        <th>اسم الدورة التدريبية</th>
                         <th>البلد</th>
                         <th>تاريخ من</th>
                         <th>تاريخ إلى</th>
@@ -63,6 +64,7 @@
                                 {{ t.person_travels_count|default:1|arabic_number }}
                             </a>
                         </td>
+                        <td>{{ t.course_name|default:"-" }}</td>
                         <td>{{ t.course_location|default:"-" }}</td>
                         <td>{{ t.date_from|default:"-" }}</td>
                         <td>{{ t.date_to|default:"-" }}</td>
@@ -81,7 +83,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="7" class="text-center py-3 text-muted">لا توجد نتائج</td>
+                        <td colspan="8" class="text-center py-3 text-muted">لا توجد نتائج</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -599,6 +601,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <tr>
                         <th>اسم المسافر</th>
                         <th>عدد السفريات</th>
+                        <th>اسم الدورة التدريبية</th>
                         <th>البلد</th>
                         <th>تاريخ من</th>
                         <th>تاريخ إلى</th>
@@ -617,6 +620,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 {{ t.person_travels_count|default:1|arabic_number }}
                             </a>
                         </td>
+                        <td>{{ t.course_name|default:"-" }}</td>
                         <td>{{ t.course_location|default:"-" }}</td>
                         <td>{{ t.date_from|default:"-" }}</td>
                         <td>{{ t.date_to|default:"-" }}</td>

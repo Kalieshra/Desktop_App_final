@@ -134,6 +134,9 @@
                         </td>
                         <td>
                             {% if tender.estimated_value_minutes %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}-{% endif %}
+                            {% if tender.estimated_value_percentage is not None %}
+                            <span class="badge bg-info-subtle text-info border border-info-subtle ms-1">{{ tender.estimated_value_percentage }}%</span>
+                            {% endif %}
                             {% if tender.estimated_value_attachment %}
                             <a href="{{ tender.estimated_value_attachment.url }}" class="btn btn-sm btn-outline-primary ms-1" target="_blank" title="تحميل المرفق"><i class="bi bi-download"></i></a>
                             {% endif %}

@@ -283,6 +283,11 @@ class Tender(models.Model):
     estimated_value_attachment = models.FileField(
         'مرفق القيمة التقديرية', upload_to='supplies/tenders/estimated_value/%Y/%m/', blank=True
     )
+    estimated_value_percentage = models.DecimalField(
+        'نسبة القيمة التقديرية (%)',
+        max_digits=5, decimal_places=2,
+        null=True, blank=True,
+    )
     envelope_opening_minutes = models.BooleanField('محضر فض مظاريف', default=False)
     envelope_opening_attachment = models.FileField(
         'مرفق محضر فض مظاريف', upload_to='supplies/tenders/envelope_opening/%Y/%m/', blank=True

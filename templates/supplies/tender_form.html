@@ -179,6 +179,14 @@
                             {% if object and object.estimated_value_attachment %}
                             <small class="text-muted d-block mt-1">الملف الحالي: <a href="{{ object.estimated_value_attachment.url }}" target="_blank">{{ object.estimated_value_attachment.name }}</a></small>
                             {% endif %}
+                            <label for="{{ form.estimated_value_percentage.id_for_label }}" class="form-label small text-muted mt-2">نسبة القيمة التقديرية (%)</label>
+                            <div class="input-group">
+                                {{ form.estimated_value_percentage }}
+                                <span class="input-group-text">%</span>
+                            </div>
+                            {% if form.estimated_value_percentage.errors %}
+                                <div class="text-danger small mt-1">{{ form.estimated_value_percentage.errors }}</div>
+                            {% endif %}
                         </div>
                         <div class="col-md-4">
                             <div class="form-check mb-2">
